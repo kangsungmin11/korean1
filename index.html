@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>아드님, 진지 드세요 - 범수의 황금 왕관 탈출 대작전!</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Jua (타이틀용 귀엽고 굵은 글씨), Gowun Dodum & Noto Sans KR (본문 가독성) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    :root {
+      --font-title: 'Jua', sans-serif;
+      --font-body: 'Noto Sans KR', sans-serif;
+      --font-story: 'Gowun Dodum', serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: #FFFBF0;
+      background-image: 
+        radial-gradient(#FFE5A3 1.5px, transparent 1.5px), 
+        radial-gradient(#FFD180 1.5px, #FFFBF0 1.5px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      color: #2D3748;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .font-title {
+      font-family: var(--font-title);
+      letter-spacing: 0.02em;
+    }
+
+    .font-story {
+      font-family: var(--font-story);
+    }
+
+    /* 동화책 느낌의 입체 카드 & 버튼 스타일 */
+    .storybook-card {
+      background: #FFFFFF;
+      border: 4px solid #4A3B32;
+      border-radius: 28px;
+      box-shadow: 0 10px 0 #4A3B32, 0 15px 25px rgba(74, 59, 50, 0.15);
+    }
+
+    .storybook-card-sm {
+      background: #FFFFFF;
+      border: 3px solid #4A3B32;
+      border-radius: 20px;
+      box-shadow: 0 6px 0 #4A3B32;
+    }
+
+    .btn-3d {
+      border: 3px solid #4A3B32;
+      border-radius: 18px;
+      box-shadow: 0 6px 0 #4A3B32;
+      transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      top: 0;
+    }
+
+    .btn-3d:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 #4A3B32;
+    }
+
+    .btn-3d:active:not(:disabled) {
+      top: 5px;
+      transform: translateY(0);
+      box-shadow: 0 1px 0 #4A3B32;
+    }
+
+    .btn-3d:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* 보기 버튼 스타일 */
+    .option-btn {
+      border: 3.5px solid #4A3B32;
+      border-radius: 22px;
+      box-shadow: 0 7px 0 #4A3B32;
+      transition: all 0.15s ease;
+      background: #FFFFFF;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: #FFF9DB;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 0 #4A3B32;
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 0 3px 0 #4A3B32;
+    }
+
+    .option-btn.correct {
+      background: #D3F9D8 !important;
+      border-color: #2B8A3E !important;
+      box-shadow: 0 6px 0 #2B8A3E !important;
+      color: #1B4332 !important;
+    }
+
+    .option-btn.wrong {
+      background: #FFE3E3 !important;
+      border-color: #C92A2A !important;
+      box-shadow: 0 6px 0 #C92A2A !important;
+      color: #7F1D1D !important;
+      animation: shake 0.4s ease;
+    }
+
+    /* 애니메이션 효과 */
+    @keyframes floatCrown {
+      0%, 100% { transform: translateY(0px) rotate(-2deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    .animate-crown {
+      animation: floatCrown 2.6s ease-in-out infinite;
+    }
+
+    @keyframes bounceSlow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .animate-bounce-slow {
+      animation: bounceSlow 2s infinite ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .animate-pop {
+      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* 큰 글씨 모드 (전자칠판 배려) */
+    body.large-text-mode .quiz-sentence {
+      font-size: 2.1rem !important;
+      line-height: 1.55 !important;
+    }
+    body.large-text-mode .option-text {
+      font-size: 1.65rem !important;
+    }
+
+    /* 기억 카드 놀이 3D 플립 */
+    .memory-card {
+      perspective: 1000px;
+      height: 120px;
+    }
+    .memory-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .memory-card.flipped .memory-card-inner,
+    .memory-card.matched .memory-card-inner {
+      transform: rotateY(180deg);
+    }
+    .memory-card-front, .memory-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 18px;
+      border: 3px solid #4A3B32;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      box-shadow: 0 5px 0 #4A3B32;
+    }
+    .memory-card-front {
+      background: linear-gradient(135deg, #FFD43B, #FAB005);
+      color: #4A3B32;
+    }
+    .memory-card-back {
+      transform: rotateY(180deg);
+      background: #FFFFFF;
+    }
+    .memory-card.matched .memory-card-back {
+      background: #D3F9D8;
+      border-color: #2B8A3E;
+      box-shadow: 0 5px 0 #2B8A3E;
+    }
+
+    /* 커스텀 스크롤바 */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FFF3BF;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #F59F00;
+      border-radius: 10px;
+      border: 2px solid #4A3B32;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-2 sm:p-4 md:p-6">
+
+  <!-- ================= 상단 네비게이션 & 교실 도구 바 ================= -->
+  <header class="max-w-7xl w-full mx-auto mb-4">
+    <div class="storybook-card-sm bg-amber-100 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- 로고 / 홈으로 버튼 -->
+      <div class="flex items-center gap-3">
+        <button onclick="goHome()" class="btn-3d bg-amber-400 hover:bg-amber-300 text-stone-900 px-3.5 py-2 flex items-center gap-2 font-title text-lg sm:text-xl" title="처음 화면으로">
+          <i class="ph-fill ph-house text-2xl"></i>
+          <span>처음으로</span>
+        </button>
+        <div class="hidden sm:flex flex-col">
+          <span class="text-xs font-bold text-amber-900 bg-amber-200 px-2.5 py-0.5 rounded-full border border-amber-700 w-fit">
+            초등 국어 3-2 4단원 (188~196쪽)
+          </span>
+          <h1 class="font-title text-xl md:text-2xl text-stone-800 mt-0.5">
+            👑 아드님, 진지 드세요 : 범수의 황금 왕관 탈출 대작전!
+          </h1>
+        </div>
+      </div>
+
+      <!-- 우측 편의 도구 모음 -->
+      <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+        <!-- 전자칠판 큰 글씨 토글 -->
+        <button id="btnTextSize" onclick="toggleLargeText()" class="btn-3d bg-white hover:bg-amber-50 px-3 py-2 text-sm sm:text-base font-bold flex items-center gap-1.5" title="칠판용 큰 글씨 모드">
+          <i class="ph-bold ph-text-aa text-xl text-indigo-600"></i>
+          <span id="textSizeLabel" class="hidden md:inline">글씨 크게</span>
+        </button>
+
+        <!-- 효과음 켜기/끄기 -->
+        <button id="btnSound" onclick="toggleSound()" class="btn-3d bg-white hover:bg-amber-50 px-3 py-2 text-sm sm:text-base font-bold flex items-center gap-1.5" title="효과음 켜기/끄기">
+          <i id="soundIcon" class="ph-fill ph-speaker-high text-xl text-emerald-600"></i>
+          <span id="soundLabel" class="hidden md:inline">소리 켜짐</span>
+        </button>
+
+        <!-- 교사용 전체 문제/정답 한눈에 보기 모달 버튼 -->
+        <button onclick="openTeacherModal()" class="btn-3d bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 text-sm sm:text-base font-title flex items-center gap-1.5">
+          <i class="ph-fill ph-chalkboard-teacher text-xl"></i>
+          <span>교사용 문제 목록</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= 메인 콘텐츠 영역 ================= -->
+  <main class="max-w-7xl w-full mx-auto flex-1 flex flex-col justify-center">
+
+    <!-- [화면 1] 홈 / 모드 & 스테이지 선택 화면 -->
+    <section id="screenHome" class="w-full animate-pop">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        <!-- 왼쪽: 스토리 소개 & 범수 일러스트 패널 (5칸) -->
+        <div class="lg:col-span-5 storybook-card bg-gradient-to-b from-amber-50 to-orange-100 p-6 flex flex-col justify-between relative overflow-hidden">
+          <div class="z-10">
+            <div class="inline-flex items-center gap-2 bg-rose-500 text-white font-title px-4 py-1.5 rounded-full border-2 border-stone-800 text-base mb-3 shadow-sm">
+              <i class="ph-fill ph-sparkle"></i> 교과서 190쪽 이야기 속으로!
+            </div>
+            <h2 class="font-title text-3xl sm:text-4xl text-stone-900 leading-tight mb-3">
+              “아드님, 진지 드세요!”<br/>
+              <span class="text-amber-600">무거운 왕관</span>을 벗겨 주세요!
+            </h2>
+            <p class="font-story text-stone-700 text-base sm:text-lg leading-relaxed bg-white/80 p-4 rounded-2xl border-2 border-amber-300">
+              평소 반말만 하던 범수에게 엄마와 할머니가 꼬박꼬박 높임말을 쓰기 시작했어요! 처음엔 왕자가 된 듯 기분이 좋았지만, 갈수록 마음이 불편해졌어요.<br/>
+              <strong class="text-rose-600 font-sans">단어·높임말 퀴즈</strong>를 풀어 <strong class="text-emerald-700 font-sans">‘솜이불 포근함 온도계’</strong>를 가득 채우고 범수가 엄마 품에 편안히 안길 수 있게 도와주세요!
+            </p>
+          </div>
+
+          <!-- 범수 + 왕관 SVG 캐릭터 일러스트 (교과서 190쪽 오마주) -->
+          <div class="my-4 flex flex-col items-center justify-center relative z-10">
+            <div class="w-56 h-56 sm:w-64 sm:h-64 relative flex items-center justify-center">
+              <svg viewBox="0 0 260 260" class="w-full h-full drop-shadow-md">
+                <!-- 배경 후광 -->
+                <circle cx="130" cy="140" r="95" fill="#FFF3BF" stroke="#FCC419" stroke-width="3" stroke-dasharray="8 6" />
+                
+                <!-- 거대한 황금 왕관 (교과서 190쪽 삽화처럼 머리 위에 둥둥!) -->
+                <g class="animate-crown">
+                  <path d="M45 105 L35 35 L85 68 L130 22 L175 68 L225 35 L215 105 Z" fill="#FFD43B" stroke="#4A3B32" stroke-width="5" stroke-linejoin="round"/>
+                  <ellipse cx="130" cy="105" rx="85" ry="18" fill="#FAB005" stroke="#4A3B32" stroke-width="5"/>
+                  <!-- 왕관 보석들 -->
+                  <circle cx="90" cy="78" r="10" fill="#4DABF7" stroke="#4A3B32" stroke-width="3.5"/>
+                  <polygon points="130,52 142,70 130,88 118,70" fill="#FF6B6B" stroke="#4A3B32" stroke-width="3.5"/>
+                  <circle cx="170" cy="78" r="10" fill="#69DB7C" stroke="#4A3B32" stroke-width="3.5"/>
+                  <!-- 반짝이 선 -->
+                  <line x1="130" y1="5" x2="130" y2="15" stroke="#FAB005" stroke-width="4" stroke-linecap="round"/>
+                  <line x1="70" y1="15" x2="78" y2="25" stroke="#FAB005" stroke-width="4" stroke-linecap="round"/>
+                  <line x1="190" y1="15" x2="182" y2="25" stroke="#FAB005" stroke-width="4" stroke-linecap="round"/>
+                </g>
+
+                <!-- 범수 몸통 (줄무늬 티셔츠 + 초록 소매) -->
+                <path d="M75 240 C75 190, 185 190, 185 240 Z" fill="#51CF66" stroke="#4A3B32" stroke-width="5"/>
+                <path d="M92 240 C92 200, 168 200, 168 240 Z" fill="#FFFFFF" stroke="#4A3B32" stroke-width="4"/>
+                <line x1="96" y1="215" x2="164" y2="215" stroke="#ADB5BD" stroke-width="3"/>
+                <line x1="94" y1="227" x2="166" y2="227" stroke="#ADB5BD" stroke-width="3"/>
+
+                <!-- 범수 얼굴 -->
+                <circle cx="130" cy="162" r="42" fill="#FFE8CC" stroke="#4A3B32" stroke-width="5"/>
+                <!-- 초록 비니 모자 / 머리카락 -->
+                <path d="M88 152 C88 115, 172 115, 172 152 C155 138, 105 138, 88 152 Z" fill="#40C057" stroke="#4A3B32" stroke-width="5"/>
+                <path d="M105 142 Q130 152 155 142" fill="none" stroke="#2D3748" stroke-width="6" stroke-linecap="round"/>
+                <!-- 당황한 눈썹 & 눈 (위를 올려다보는 표정) -->
+                <path d="M105 148 Q114 142 122 149" fill="none" stroke="#4A3B32" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M138 149 Q146 142 155 148" fill="none" stroke="#4A3B32" stroke-width="3.5" stroke-linecap="round"/>
+                <circle cx="114" cy="160" r="6" fill="#4A3B32"/>
+                <circle cx="116" cy="158" r="2.2" fill="#FFFFFF"/>
+                <circle cx="146" cy="160" r="6" fill="#4A3B32"/>
+                <circle cx="148" cy="158" r="2.2" fill="#FFFFFF"/>
+                <!-- 발그레한 볼 -->
+                <ellipse cx="100" cy="172" rx="8" ry="5" fill="#FFA8A8" opacity="0.7"/>
+                <ellipse cx="160" cy="172" rx="8" ry="5" fill="#FFA8A8" opacity="0.7"/>
+                <!-- 당황한 입 & 땀방울 -->
+                <circle cx="130" cy="177" r="5" fill="#FA5252" stroke="#4A3B32" stroke-width="3"/>
+                <path d="M178 145 Q184 155 178 162 Q172 155 178 145 Z" fill="#74C0FC" stroke="#4A3B32" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="bg-stone-800 text-amber-300 font-title text-sm sm:text-base px-4 py-1.5 rounded-full shadow">
+              💬 “어? 아들이고 손자인데 나한테 높임말을 쓰겠다니요?!”
+            </span>
+          </div>
+
+          <!-- 하단 교과서 핵심 문구 -->
+          <div class="text-center text-xs sm:text-sm font-bold text-stone-600">
+            글: 강민경 · 그림: 이영림 | 초등 3-2 국어 나 4단원 「서로 존중하며 대화해요」
+          </div>
+        </div>
+
+        <!-- 오른쪽: 플레이 모드 설정 & 스테이지 선택 (7칸) -->
+        <div class="lg:col-span-7 flex flex-col gap-5 justify-between">
+          
+          <!-- 1. 플레이 모드 선택 카드 -->
+          <div class="storybook-card p-5 sm:p-6 bg-white">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-title text-2xl text-stone-800 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-amber-400 border-2 border-stone-800 flex items-center justify-center text-lg">1</span>
+                수업 참여 방법(모드)을 골라요
+              </h3>
+              <span class="text-xs sm:text-sm font-bold text-stone-500">교실 상황에 맞게 선택하세요!</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <!-- 개인 / 학급 전체 도전 모드 -->
+              <button id="modeBtnSolo" onclick="selectPlayMode('solo')" class="btn-3d p-4 text-left flex items-center gap-4 bg-amber-300 ring-4 ring-amber-400/50">
+                <div class="w-14 h-14 rounded-2xl bg-white border-2 border-stone-800 flex items-center justify-center text-3xl shrink-0">
+                  🌟
+                </div>
+                <div>
+                  <div class="font-title text-xl text-stone-900">개인 · 우리 반 함께 도전</div>
+                  <p class="text-xs sm:text-sm text-stone-700 font-medium mt-0.5">
+                    혼자서 풀거나 우리 반 친구들이 다 함께 힘을 합쳐 왕관을 탈출해요!
+                  </p>
+                </div>
+              </button>
+
+              <!-- 모둠 대항전 모드 -->
+              <button id="modeBtnTeam" onclick="selectPlayMode('team')" class="btn-3d p-4 text-left flex items-center gap-4 bg-stone-100 hover:bg-amber-50">
+                <div class="w-14 h-14 rounded-2xl bg-white border-2 border-stone-800 flex items-center justify-center text-3xl shrink-0">
+                  🏆
+                </div>
+                <div>
+                  <div class="font-title text-xl text-stone-900">신나는 모둠 대항전</div>
+                  <p class="text-xs sm:text-sm text-stone-700 font-medium mt-0.5">
+                    모둠별로 돌아가며 문제를 풀고 점수를 겨뤄요! (+10/-5 점수판 지원)
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            <!-- 모둠 수 선택 옵션 (모둠 대항전 선택 시 표시) -->
+            <div id="teamConfigBox" class="hidden mt-4 pt-4 border-t-2 border-dashed border-stone-300 flex flex-wrap items-center justify-between gap-3 bg-indigo-50/70 p-3.5 rounded-2xl">
+              <div class="flex items-center gap-2 font-title text-lg text-indigo-950">
+                <i class="ph-fill ph-users-three text-2xl text-indigo-600"></i>
+                <span>참여할 모둠 수 선택:</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="setTeamCount(2)" id="teamCnt2" class="btn-3d px-4 py-1.5 font-title text-base bg-white">2모둠</button>
+                <button onclick="setTeamCount(3)" id="teamCnt3" class="btn-3d px-4 py-1.5 font-title text-base bg-white">3모둠</button>
+                <button onclick="setTeamCount(4)" id="teamCnt4" class="btn-3d px-4 py-1.5 font-title text-base bg-indigo-500 text-white">4모둠</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 스테이지 선택 카드 -->
+          <div class="storybook-card p-5 sm:p-6 bg-white flex-1 flex flex-col justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <h3 class="font-title text-2xl text-stone-800 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-emerald-400 border-2 border-stone-800 flex items-center justify-center text-lg">2</span>
+                도전할 퀴즈 스테이지를 골라요
+              </h3>
+              <!-- 전체 이어하기 버튼 -->
+              <button onclick="startQuiz('all')" class="btn-3d bg-rose-500 hover:bg-rose-400 text-white px-4 py-2 font-title text-base sm:text-lg flex items-center gap-2">
+                <i class="ph-fill ph-play-circle text-2xl"></i>
+                <span>전 스테이지 이어하기 (총 32문항)</span>
+              </button>
+            </div>
+
+            <!-- 4대 스테이지 그리드 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              
+              <!-- 스테이지 1 -->
+              <div onclick="startQuiz(1)" class="cursor-pointer btn-3d bg-sky-100 hover:bg-sky-200 p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="bg-sky-600 text-white font-title text-xs px-2.5 py-0.5 rounded-full">STAGE 1 · 8문항</span>
+                    <span class="text-xs font-bold text-sky-900">교과서 188~193쪽</span>
+                  </div>
+                  <h4 class="font-title text-xl text-stone-900 flex items-center gap-1.5">
+                    🔍 지문 쏙쏙! 어휘 & 초성 추리
+                  </h4>
+                  <p class="text-xs sm:text-sm text-stone-700 mt-1">
+                    뭉그적거리며, 비밀 모의, 솔선수범, 배웅, 호통 등 지문 핵심 어휘 맞히기 (객관식/초성 입력 지원)
+                  </p>
+                </div>
+                <div class="mt-3 flex items-center justify-end text-sky-800 font-title text-sm">
+                  <span>스테이지 1 출발</span> <i class="ph-bold ph-caret-right ml-1"></i>
+                </div>
+              </div>
+
+              <!-- 스테이지 2 -->
+              <div onclick="startQuiz(2)" class="cursor-pointer btn-3d bg-amber-100 hover:bg-amber-200 p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="bg-amber-600 text-white font-title text-xs px-2.5 py-0.5 rounded-full">STAGE 2 · 8문항</span>
+                    <span class="text-xs font-bold text-amber-900">교과서 188~194쪽</span>
+                  </div>
+                  <h4 class="font-title text-xl text-stone-900 flex items-center gap-1.5">
+                    🎭 실감 나는 흉내 내는 말(부사어)
+                  </h4>
+                  <p class="text-xs sm:text-sm text-stone-700 mt-1">
+                    푹, 수북이, 붕붕, 절레절레, 쾅쾅, 후드득, 찡긋-빙그레, 푹신푹신한 등 생생한 표현 고르기
+                  </p>
+                </div>
+                <div class="mt-3 flex items-center justify-end text-amber-900 font-title text-sm">
+                  <span>스테이지 2 출발</span> <i class="ph-bold ph-caret-right ml-1"></i>
+                </div>
+              </div>
+
+              <!-- 스테이지 3 -->
+              <div onclick="startQuiz(3)" class="cursor-pointer btn-3d bg-emerald-100 hover:bg-emerald-200 p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="bg-emerald-600 text-white font-title text-xs px-2.5 py-0.5 rounded-full">STAGE 3 · 8문항</span>
+                    <span class="text-xs font-bold text-emerald-900">교과서 195쪽 ‘낱말 알기’</span>
+                  </div>
+                  <h4 class="font-title text-xl text-stone-900 flex items-center gap-1.5">
+                    🧩 낱말 관계 삼총사 분류하기
+                  </h4>
+                  <p class="text-xs sm:text-sm text-stone-700 mt-1">
+                    비슷한 관계(고치다-바로잡다), 반대 관계(배우다-가르치다), 포함하는 관계(식탁-가구) 완전 정복!
+                  </p>
+                </div>
+                <div class="mt-3 flex items-center justify-end text-emerald-900 font-title text-sm">
+                  <span>스테이지 3 출발</span> <i class="ph-bold ph-caret-right ml-1"></i>
+                </div>
+              </div>
+
+              <!-- 스테이지 4 -->
+              <div onclick="startQuiz(4)" class="cursor-pointer btn-3d bg-purple-100 hover:bg-purple-200 p-4 flex flex-col justify-between">
+                <div>
+                  <div items-center class="flex items-center justify-between mb-1.5">
+                    <span class="bg-purple-600 text-white font-title text-xs px-2.5 py-0.5 rounded-full">STAGE 4 · 8문항</span>
+                    <span class="text-xs font-bold text-purple-900">교과서 196·210쪽</span>
+                  </div>
+                  <h4 class="font-title text-xl text-stone-900 flex items-center gap-1.5">
+                    💬 높임 표현 바로잡기 & 짝짓기
+                  </h4>
+                  <p class="text-xs sm:text-sm text-stone-700 mt-1">
+                    장면 가~다의 잘못된 높임말·반말을 상황에 맞게 고치고 높임의 뜻이 있는 낱말 짝짓기!
+                  </p>
+                </div>
+                <div class="mt-3 flex items-center justify-end text-purple-900 font-title text-sm">
+                  <span>스테이지 4 출발</span> <i class="ph-bold ph-caret-right ml-1"></i>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 보너스 활동: 교과서 210쪽 높임 낱말 기억 카드 놀이 버튼 -->
+            <div class="mt-4 pt-3 border-t-2 border-stone-200 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2 text-sm font-bold text-stone-700">
+                <span class="bg-amber-400 text-stone-900 font-title px-2.5 py-0.5 rounded-md border border-stone-800">보너스 놀이터</span>
+                <span>교과서 210쪽 「높임의 뜻이 있는 낱말 기억 놀이」도 해 볼까요?</span>
+              </div>
+              <button onclick="openMemoryGame()" class="btn-3d bg-amber-300 hover:bg-amber-200 text-stone-900 px-4 py-1.5 font-title text-base flex items-center gap-1.5">
+                <i class="ph-fill ph-cards text-xl"></i>
+                <span>낱말 카드 뒤집기 놀이</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- [화면 2] 퀴즈 플레이 화면 -->
+    <section id="screenQuiz" class="hidden w-full animate-pop">
+      
+      <!-- 모둠 대항전 점수판 (모둠 모드일 때만 상단 노출) -->
+      <div id="teamScoreboard" class="hidden mb-4">
+        <div class="storybook-card-sm bg-indigo-50 p-3.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="bg-indigo-600 text-white font-title text-sm px-3 py-1 rounded-full">
+                🏆 모둠 대항전 점수판
+              </span>
+              <span class="text-xs sm:text-sm font-bold text-indigo-900">
+                모둠 카드를 누르면 현재 차례를 바꿀 수 있어요! (+10 / -5 수동 조절 가능)
+              </span>
+            </div>
+            <button onclick="nextTeamTurn()" class="btn-3d bg-white hover:bg-indigo-100 text-indigo-900 px-3 py-1 text-xs sm:text-sm font-title flex items-center gap-1">
+              <i class="ph-bold ph-arrows-clockwise"></i> 다음 모둠 차례로 넘기기
+            </button>
+          </div>
+          <div id="teamCardsContainer" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <!-- JS에서 동적 생성 -->
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        
+        <!-- 좌측: 범수 상태 & 솜이불 포근함(예절) 온도계 (4칸) -->
+        <div class="lg:col-span-4 storybook-card bg-gradient-to-b from-amber-50 to-orange-50 p-5 flex flex-col items-center justify-between">
+          
+          <!-- 현재 스테이지 & 점수 배지 -->
+          <div class="w-full flex items-center justify-between gap-2 mb-2">
+            <span id="stageBadge" class="bg-stone-800 text-amber-300 font-title text-sm px-3.5 py-1 rounded-full">
+              STAGE 1
+            </span>
+            <div id="soloScoreBox" class="flex items-center gap-2 bg-white px-3.5 py-1 rounded-full border-2 border-stone-800 font-title text-lg">
+              <span class="text-amber-500">⭐</span>
+              <span id="scoreDisplay">0</span>점
+              <span id="streakBadge" class="hidden text-xs bg-rose-500 text-white px-2 py-0.5 rounded-full">🔥 2연속!</span>
+            </div>
+          </div>
+
+          <!-- 동적 범수 캐릭터 (진행도에 따라 왕관 높이와 표정이 변함!) -->
+          <div class="w-44 h-44 sm:w-48 sm:h-48 relative flex items-center justify-center my-1">
+            <div id="beomsuStatusCharacter" class="w-full h-full">
+              <!-- JS updateBeomsuCharacter()로 렌더링 -->
+            </div>
+          </div>
+
+          <!-- 범수의 현재 마음 말풍선 -->
+          <div id="beomsuStatusSpeech" class="w-full bg-white border-2 border-stone-800 rounded-2xl p-3 text-center font-story font-bold text-stone-800 text-sm sm:text-base shadow-sm mb-3">
+            “엄마와 할머니가 아드님, 손자님 하니까 왕관이 너무 무거워요!”
+          </div>
+
+          <!-- 솜이불 포근함(예절) 온도계 -->
+          <div class="w-full bg-white p-3.5 rounded-2xl border-2 border-stone-800">
+            <div class="flex items-center justify-between text-xs sm:text-sm font-title mb-1.5">
+              <span class="text-rose-600 flex items-center gap-1">
+                <i class="ph-fill ph-thermometer-hot text-lg"></i> 솜이불 포근함 온도계
+              </span>
+              <span id="thermometerText" class="text-stone-800 text-base">0%</span>
+            </div>
+            <div class="w-full h-6 bg-stone-200 rounded-full border-2 border-stone-800 overflow-hidden p-0.5">
+              <div id="thermometerBar" class="h-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-500 rounded-full transition-all duration-500 flex items-center justify-end pr-2" style="width: 8%;">
+                <span class="text-xs">☁️</span>
+              </div>
+            </div>
+            <div class="flex justify-between text-[11px] font-bold text-stone-500 mt-1">
+              <span>👑 어색한 왕관</span>
+              <span>✨ 반말 탈출</span>
+              <span>🛌 포근한 솜이불!</span>
+            </div>
+          </div>
+
+          <!-- 스테이지 빠른 전환 탭 -->
+          <div class="w-full mt-4 pt-3 border-t-2 border-amber-200">
+            <div class="text-xs font-bold text-stone-500 mb-1.5 text-center">다른 스테이지로 바로 이동하기</div>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button onclick="startQuiz(1)" id="quickTab1" class="btn-3d py-1.5 text-xs font-title bg-white">1.어휘</button>
+              <button onclick="startQuiz(2)" id="quickTab2" class="btn-3d py-1.5 text-xs font-title bg-white">2.흉내말</button>
+              <button onclick="startQuiz(3)" id="quickTab3" class="btn-3d py-1.5 text-xs font-title bg-white">3.낱말관계</button>
+              <button onclick="startQuiz(4)" id="quickTab4" class="btn-3d py-1.5 text-xs font-title bg-white">4.높임말</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 우측: 메인 문제 출제 및 정답 선택 영역 (8칸) -->
+        <div class="lg:col-span-8 storybook-card bg-white p-5 sm:p-7 flex flex-col justify-between min-h-[520px] relative">
+          
+          <!-- 상단: 문제 번호, 교과서 쪽수, 모드 전환(스테이지1), 힌트 버튼 -->
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b-2 border-stone-200">
+              <div class="flex items-center gap-2.5">
+                <span id="questionProgressBadge" class="bg-amber-400 border-2 border-stone-800 text-stone-900 font-title text-lg sm:text-xl px-4 py-1 rounded-2xl">
+                  문제 1 / 8
+                </span>
+                <span id="textbookPageBadge" class="bg-stone-100 border-2 border-stone-400 text-stone-700 font-bold text-xs sm:text-sm px-3 py-1 rounded-xl flex items-center gap-1">
+                  <i class="ph-bold ph-book-open"></i> 교과서 188쪽
+                </span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <!-- 스테이지 1 전용: 객관식 <-> 초성 직접 입력 전환 토글 -->
+                <button id="btnInputModeToggle" onclick="toggleStage1InputMode()" class="hidden btn-3d bg-sky-100 hover:bg-sky-200 text-sky-900 px-3 py-1.5 text-xs sm:text-sm font-title flex items-center gap-1.5">
+                  <i class="ph-bold ph-keyboard text-base"></i>
+                  <span id="inputModeLabel">주관식 입력으로 풀기</span>
+                </button>
+
+                <!-- 힌트 보기 버튼 -->
+                <button id="btnShowHint" onclick="showHint()" class="btn-3d bg-amber-200 hover:bg-amber-300 text-stone-900 px-3.5 py-1.5 text-sm sm:text-base font-title flex items-center gap-1.5">
+                  <i class="ph-fill ph-lightbulb text-amber-600 text-lg"></i>
+                  <span>힌트 보기</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 발문 안내 타이틀 -->
+            <div id="questionPrompt" class="mt-4 text-base sm:text-lg font-bold text-indigo-700 flex items-center gap-2">
+              <i class="ph-fill ph-chat-circle-dots text-xl"></i>
+              <span>다음 지문 속 빈칸에 들어갈 알맞은 낱말을 골라 보세요.</span>
+            </div>
+
+            <!-- 지문 / 문제 카드 박스 -->
+            <div id="questionContentBox" class="mt-3 bg-amber-50/90 border-3 border-stone-800 rounded-3xl p-5 sm:p-6 shadow-inner">
+              <!-- JS renderQuestion()에서 동적으로 채움 -->
+            </div>
+
+            <!-- 힌트 말풍선 (힌트 버튼 클릭 시 표시) -->
+            <div id="hintBubble" class="hidden mt-3 bg-yellow-100 border-2 border-amber-500 rounded-2xl p-3.5 flex items-start gap-3 animate-pop">
+              <span class="text-2xl shrink-0">💡</span>
+              <div class="text-sm sm:text-base text-stone-800">
+                <strong class="font-title text-amber-900 mr-1">[교과서 힌트]</strong>
+                <span id="hintText">여기에 힌트가 표시됩니다.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 중단: 4지선다 보기 버튼 그리드 또는 주관식 입력창 -->
+          <div class="my-5">
+            <!-- 4지선다 컨테이너 -->
+            <div id="optionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <!-- JS에서 생성 -->
+            </div>
+
+            <!-- 스테이지 1 주관식 직접 입력 컨테이너 -->
+            <div id="directInputBox" class="hidden bg-sky-50 border-3 border-sky-800 rounded-2xl p-5 text-center">
+              <div class="text-sm sm:text-base font-bold text-sky-900 mb-3">
+                초성 힌트 <span id="directChosungBadge" class="bg-amber-300 px-3 py-0.5 rounded-lg border border-stone-800 font-title text-lg mx-1">ㅁㄱㅈㄱㄹㅁ</span> 를 보고 정답을 입력해 보세요!
+              </div>
+              <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+                <input id="directAnswerInput" type="text" placeholder="정답 낱말을 입력하세요" 
+                  class="w-full px-4 py-3 text-xl font-bold text-center rounded-xl border-3 border-stone-800 focus:outline-none focus:ring-4 focus:ring-sky-300"
+                  onkeydown="if(event.key==='Enter') submitDirectAnswer()" />
+                <button onclick="submitDirectAnswer()" class="btn-3d bg-sky-500 hover:bg-sky-400 text-white font-title text-xl px-6 py-3 shrink-0 w-full sm:w-auto">
+                  정답 확인!
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 하단: 정답 해설 패널 (정답/오답 선택 시 나타나며 교사가 설명 후 '다음 문제' 클릭) -->
+          <div id="feedbackPanel" class="hidden rounded-2xl border-3 border-stone-800 p-4 sm:p-5 animate-pop">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-start gap-3.5">
+                <div id="feedbackIcon" class="w-12 h-12 rounded-2xl border-2 border-stone-800 flex items-center justify-center text-2xl shrink-0 bg-white">
+                  ⭕
+                </div>
+                <div>
+                  <div id="feedbackTitle" class="font-title text-xl sm:text-2xl text-stone-900">
+                    정답입니다! 참 잘했어요!
+                  </div>
+                  <p id="feedbackDesc" class="text-sm sm:text-base text-stone-800 font-medium mt-1 leading-relaxed">
+                    해설 내용이 여기에 들어갑니다.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                <button id="btnRetryQuestion" onclick="retryCurrentQuestion()" class="hidden btn-3d bg-white hover:bg-stone-100 text-stone-800 px-4 py-2.5 font-title text-base">
+                  다시 고르기
+                </button>
+                <button id="btnNextQuestion" onclick="nextQuestion()" class="btn-3d bg-emerald-500 hover:bg-emerald-400 text-white px-6 py-3 font-title text-lg sm:text-xl flex items-center gap-2 animate-bounce-slow">
+                  <span>다음 문제</span>
+                  <i class="ph-bold ph-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 문제 이동 보조 바 (이전 문제 / 건너뛰기) -->
+          <div class="flex items-center justify-between pt-3 border-t border-stone-200 text-xs sm:text-sm text-stone-500">
+            <button onclick="prevQuestion()" id="btnPrevQ" class="hover:text-stone-900 font-bold flex items-center gap-1 disabled:opacity-40">
+              <i class="ph-bold ph-caret-left"></i> 이전 문제
+            </button>
+            <span id="stageTitleFooter" class="font-bold text-stone-600">스테이지 1 : 지문 쏙쏙! 어휘 & 초성 추리 퀴즈</span>
+            <button onclick="nextQuestion()" class="hover:text-stone-900 font-bold flex items-center gap-1">
+              건너뛰기 <i class="ph-bold ph-caret-right"></i>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- [화면 3] 보너스 활동: 교과서 210쪽 '높임의 뜻이 있는 낱말 기억 놀이' -->
+    <section id="screenMemory" class="hidden w-full animate-pop">
+      <div class="storybook-card bg-white p-5 sm:p-7">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b-2 border-stone-200 mb-5">
+          <div>
+            <span class="bg-amber-400 text-stone-900 font-title text-xs sm:text-sm px-3 py-1 rounded-full border border-stone-800">
+              교과서 210쪽 「배운 내용 실천하기」
+            </span>
+            <h2 class="font-title text-2xl sm:text-3xl text-stone-900 mt-1">
+              🃏 높임의 뜻이 있는 낱말 기억 카드 놀이
+            </h2>
+            <p class="text-sm sm:text-base text-stone-600 font-medium">
+              분홍색(본래의 낱말) 카드와 파란색(높임의 뜻이 있는 낱말) 카드를 한 장씩 뒤집어 뜻이 같은 짝을 찾아보세요!
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-amber-100 border-2 border-stone-800 rounded-2xl px-4 py-2 font-title text-lg">
+              찾은 짝: <span id="memoryMatchedCount" class="text-rose-600">0</span> / 6쌍
+            </div>
+            <button onclick="initMemoryGame()" class="btn-3d bg-sky-500 hover:bg-sky-400 text-white px-4 py-2 font-title text-base flex items-center gap-1.5">
+              <i class="ph-bold ph-arrows-counter-clockwise"></i> 카드 다시 섞기
+            </button>
+            <button onclick="goHome()" class="btn-3d bg-stone-200 hover:bg-stone-300 text-stone-800 px-4 py-2 font-title text-base">
+              나가기
+            </button>
+          </div>
+        </div>
+
+        <!-- 카드 그리드 (12장 = 6쌍) -->
+        <div id="memoryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-4xl mx-auto my-2">
+          <!-- JS에서 렌더링 -->
+        </div>
+
+        <!-- 짝 찾기 성공 메시지 박스 -->
+        <div id="memoryMatchBanner" class="mt-5 bg-emerald-50 border-2 border-emerald-600 rounded-2xl p-3.5 text-center font-title text-lg text-emerald-900">
+          카드를 두 장씩 뒤집어 본래의 낱말과 높임 낱말의 짝을 맞춰 보세요! (예: 밥 ↔ 진지)
+        </div>
+      </div>
+    </section>
+
+    <!-- [화면 4] 엔딩 / 결과 축하 화면 (교과서 194쪽 솜이불 엔딩!) -->
+    <section id="screenResult" class="hidden w-full animate-pop">
+      <div class="storybook-card bg-gradient-to-b from-amber-50 via-white to-rose-50 p-6 sm:p-10 text-center max-w-4xl mx-auto relative overflow-hidden">
+        
+        <div class="inline-flex items-center gap-2 bg-emerald-500 text-white font-title px-5 py-1.5 rounded-full border-2 border-stone-800 text-lg mb-3 shadow">
+          🎉 황금 왕관 탈출 성공!
+        </div>
+
+        <h2 class="font-title text-3xl sm:text-5xl text-stone-900 leading-tight">
+          “그래, 착하다. 우리 아들!”
+        </h2>
+        <p class="font-story text-lg sm:text-2xl text-stone-700 font-bold mt-2 max-w-2xl mx-auto">
+          “엄마가 해 주는 ‘아들’이란 말이 이렇게 달콤하게 들렸던 적이 없었어요.<br/>
+          엄마가 해 주는 반말이 <span class="text-rose-600 underline decoration-wavy decoration-amber-400">푹신푹신한 솜이불처럼 편안했어요.</span>” <span class="text-sm text-stone-500">(교과서 194쪽)</span>
+        </p>
+
+        <!-- 엔딩 일러스트: 왕관을 벗고 푹신푹신한 솜이불 속에서 엄마 품에 안겨 행복한 범수 -->
+        <div class="my-6 flex justify-center">
+          <div class="w-64 h-56 relative">
+            <svg viewBox="0 0 300 240" class="w-full h-full drop-shadow-md">
+              <!-- 포근한 분홍/노랑 솜이불 구름 배경 -->
+              <path d="M35 175 C20 140, 60 110, 95 125 C120 95, 180 95, 205 125 C240 110, 280 140, 265 175 C280 205, 240 225, 200 220 C160 230, 140 230, 100 220 C60 225, 20 205, 35 175 Z" fill="#FFD8A8" stroke="#4A3B32" stroke-width="5"/>
+              <!-- 바닥에 살짝 내려놓은 작은 왕관 -->
+              <path d="M235 205 L230 182 L245 192 L255 178 L265 192 L280 182 L275 205 Z" fill="#FFD43B" stroke="#4A3B32" stroke-width="3.5" transform="rotate(12 255 195)"/>
+              <!-- 엄마 얼굴 (따뜻한 미소) -->
+              <circle cx="115" cy="105" r="38" fill="#FFE8CC" stroke="#4A3B32" stroke-width="4.5"/>
+              <path d="M75 105 C72 60, 158 60, 155 105 C145 78, 85 78, 75 105 Z" fill="#5C3C24" stroke="#4A3B32" stroke-width="4.5"/>
+              <path d="M98 102 Q105 94 112 102" fill="none" stroke="#4A3B32" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M122 102 Q129 94 136 102" fill="none" stroke="#4A3B32" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M106 118 Q117 128 128 118" fill="none" stroke="#E03131" stroke-width="3.5" stroke-linecap="round"/>
+              <ellipse cx="94" cy="112" rx="7" ry="4.5" fill="#FFA8A8" opacity="0.7"/>
+              <ellipse cx="138" cy="112" rx="7" ry="4.5" fill="#FFA8A8" opacity="0.7"/>
+
+              <!-- 범수 얼굴 (엄마 품에 와락 안긴 행복한 표정) -->
+              <circle cx="178" cy="122" r="34" fill="#FFE8CC" stroke="#4A3B32" stroke-width="4.5"/>
+              <path d="M144 116 C144 84, 212 84, 212 116 C198 104, 158 104, 144 116 Z" fill="#40C057" stroke="#4A3B32" stroke-width="4.5"/>
+              <path d="M162 120 Q168 112 174 120" fill="none" stroke="#4A3B32" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M184 120 Q190 112 196 120" fill="none" stroke="#4A3B32" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M168 134 Q178 144 188 134" fill="none" stroke="#E03131" stroke-width="3.5" stroke-linecap="round"/>
+              <ellipse cx="158" cy="129" rx="6.5" ry="4" fill="#FFA8A8" opacity="0.75"/>
+              <ellipse cx="198" cy="129" rx="6.5" ry="4" fill="#FFA8A8" opacity="0.75"/>
+
+              <!-- 하트 아이콘들 -->
+              <path d="M150 55 C150 48, 140 44, 136 51 C132 44, 122 48, 122 55 C122 65, 136 72, 136 72 C136 72, 150 65, 150 55 Z" fill="#FF6B6B" stroke="#4A3B32" stroke-width="3"/>
+              <text x="115" y="188" text-anchor="middle" font-family="Jua" font-size="18" fill="#4A3B32">☁️ 푹신푹신 솜이불 ☁️</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 최종 점수 또는 모둠 순위 결과 박스 -->
+        <div id="resultSummaryBox" class="bg-white border-3 border-stone-800 rounded-3xl p-5 max-w-2xl mx-auto mb-6 shadow-sm">
+          <!-- JS에서 결과 주입 -->
+        </div>
+
+        <!-- 범수의 약속 다짐 배너 -->
+        <div class="bg-amber-100 border-2 border-amber-500 rounded-2xl p-4 max-w-xl mx-auto mb-6 text-stone-800 font-title text-lg sm:text-xl">
+          🤙 “약속할게……요. 앞으로 높임말 잘 쓸게……요!”
+        </div>
+
+        <!-- 하단 버튼들 -->
+        <div class="flex flex-wrap items-center justify-center gap-4">
+          <button onclick="goHome()" class="btn-3d bg-amber-400 hover:bg-amber-300 text-stone-900 px-6 py-3.5 font-title text-xl flex items-center gap-2">
+            <i class="ph-fill ph-house"></i> 다른 스테이지 골라 풀기
+          </button>
+          <button onclick="restartCurrentStage()" class="btn-3d bg-emerald-500 hover:bg-emerald-400 text-white px-6 py-3.5 font-title text-xl flex items-center gap-2">
+            <i class="ph-bold ph-arrow-counter-clockwise"></i> 방금 한 스테이지 다시 하기
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= 교사용 전체 문제/정답 네비게이터 모달 ================= -->
+  <div id="teacherModal" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-6">
+    <div class="storybook-card bg-white max-w-5xl w-full max-h-[88vh] flex flex-col overflow-hidden animate-pop">
+      <!-- 모달 헤더 -->
+      <div class="bg-indigo-600 text-white px-6 py-4 flex flex-wrap items-center justify-between gap-3 border-b-4 border-stone-800">
+        <div>
+          <h3 class="font-title text-2xl flex items-center gap-2">
+            <i class="ph-fill ph-chalkboard-teacher text-3xl text-amber-300"></i>
+            교사용 전체 문항 & 정답 한눈에 보기 (문제 바로 이동)
+          </h3>
+          <p class="text-xs sm:text-sm text-indigo-100">
+            원하는 문제를 클릭하면 수업 중 해당 문제 화면으로 즉시 이동합니다.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btnToggleAnswersInModal" onclick="toggleModalAnswers()" class="btn-3d bg-amber-300 text-stone-900 px-3.5 py-1.5 font-title text-sm">
+            정답 가리기/보이기
+          </button>
+          <button onclick="closeTeacherModal()" class="btn-3d bg-rose-500 text-white px-3.5 py-1.5 font-title text-sm">
+            닫기 ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- 모달 본문 리스트 -->
+      <div id="teacherModalList" class="p-5 overflow-y-auto space-y-6 flex-1 bg-stone-50">
+        <!-- JS에서 4개 스테이지 32문항 렌더링 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT 로직 및 문제 데이터베이스 ================= -->
+  <script>
+    /*************************************************************************
+     * 1. Web Audio API 효과음 합성기 (외부 파일 없이 즉각 작동)
+     *************************************************************************/
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type, duration, startTimeOffset = 0, vol = 0.15) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + startTimeOffset);
+
+        gain.gain.setValueAtTime(vol, ctx.currentTime + startTimeOffset);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTimeOffset + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime + startTimeOffset);
+        osc.stop(ctx.currentTime + startTimeOffset + duration);
+      } catch (e) {}
+    }
+
+    function playClick() {
+      playTone(520, 'sine', 0.08, 0, 0.12);
+    }
+
+    function playHintSound() {
+      playTone(660, 'triangle', 0.12, 0, 0.14);
+      playTone(880, 'triangle', 0.2, 0.1, 0.14);
+    }
+
+    function playCorrectSound() {
+      playTone(523.25, 'triangle', 0.12, 0, 0.18);    // C5
+      playTone(659.25, 'triangle', 0.12, 0.1, 0.18);  // E5
+      playTone(783.99, 'triangle', 0.14, 0.2, 0.18);  // G5
+      playTone(1046.50, 'triangle', 0.35, 0.3, 0.22); // C6
+    }
+
+    function playWrongSound() {
+      playTone(300, 'sawtooth', 0.18, 0, 0.12);
+      playTone(240, 'sawtooth', 0.3, 0.15, 0.12);
+    }
+
+    function playFanfareSound() {
+      const notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5];
+      const times = [0, 0.12, 0.24, 0.36, 0.55, 0.70];
+      const durs  = [0.1, 0.1, 0.1, 0.18, 0.12, 0.45];
+      notes.forEach((n, idx) => playTone(n, 'triangle', durs[idx], times[idx], 0.2));
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      const label = document.getElementById('soundLabel');
+      if (soundEnabled) {
+        icon.className = 'ph-fill ph-speaker-high text-xl text-emerald-600';
+        label.textContent = '소리 켜짐';
+        playClick();
+      } else {
+        icon.className = 'ph-fill ph-speaker-slash text-xl text-rose-500';
+        label.textContent = '소리 꺼짐';
+      }
+    }
+
+    function toggleLargeText() {
+      playClick();
+      document.body.classList.toggle('large-text-mode');
+      const isLarge = document.body.classList.contains('large-text-mode');
+      document.getElementById('textSizeLabel').textContent = isLarge ? '기본 글씨' : '글씨 크게';
+    }
+
+    /*************************************************************************
+     * 2. 교과서 188~196쪽 & 210쪽 완벽 반영 퀴즈 데이터베이스 (총 32문항)
+     *************************************************************************/
+    const STAGE_INFO = {
+      1: {
+        title: "스테이지 1 : 지문 쏙쏙! 어휘 & 초성 추리 퀴즈",
+        badge: "STAGE 1 · 어휘 & 초성",
+        prompt: "지문 속 문장의 빈칸에 들어갈 알맞은 낱말을 골라 보세요."
+      },
+      2: {
+        title: "스테이지 2 : 실감 나는 표현! 흉내 내는 말(부사어) 퀴즈",
+        badge: "STAGE 2 · 흉내 내는 말",
+        prompt: "범수와 가족들의 행동·기분을 생생하게 나타내는 낱말을 골라 보세요."
+      },
+      3: {
+        title: "스테이지 3 : 교과서 195쪽 ‘낱말 알기’ - 낱말 관계 삼총사!",
+        badge: "STAGE 3 · 낱말 관계",
+        prompt: "두 낱말 사이의 관계를 생각하며 알맞은 정답을 골라 보세요."
+      },
+      4: {
+        title: "스테이지 4 : 교과서 196·210쪽 ‘높임 표현 바로잡기 & 짝짓기’",
+        badge: "STAGE 4 · 바른 높임말",
+        prompt: "대화 상황에 알맞은 높임 표현으로 고치거나 알맞은 높임 낱말을 골라 보세요."
+      }
+    };
+
+    const QUIZ_DB = [
+      // ==================== STAGE 1 (8문항: 교과서 188~193쪽 어휘 & 초성) ====================
+      {
+        stage: 1,
+        qNum: 1,
+        page: "교과서 188쪽",
+        chosung: "ㅁㄱㅈㄱㄹㅁ",
+        sentenceBefore: "“엄마가 재촉하는 소리에 범수는 (",
+        blankTarget: "뭉그적거리며",
+        sentenceAfter: ") 식탁 앞에 앉았어요.”",
+        meaningHint: "제자리에서 몸의 일부를 큰 동작으로 게으르게 움직이며 (188쪽 각주 낱말)",
+        options: ["뭉그적거리며", "깡충깡충하며", "부지런히", "쌩쌩 달리며"],
+        answer: "뭉그적거리며",
+        explanation: "교과서 188쪽 아래 뜻풀이에 나와 있듯이 ‘뭉그적거리며’는 제자리에서 몸의 일부를 큰 동작으로 게으르게 움직이는 모양을 뜻해요."
+      },
+      {
+        stage: 1,
+        qNum: 2,
+        page: "교과서 189쪽",
+        chosung: "ㅂㅁ ㅁㅇ",
+        sentenceBefore: "“아무리 말을 해도 범수가 고치지 않으니, 엄마는 할머니와 속닥속닥 (",
+        blankTarget: "비밀 모의",
+        sentenceAfter: ")를 했어요.”",
+        meaningHint: "남이 모르게 속닥거리며 특별한 방법이나 계획을 함께 꾸미는 일",
+        options: ["비밀 모의", "자랑 대회", "요리 연습", "공개 발표"],
+        answer: "비밀 모의",
+        explanation: "엄마와 할머니는 범수의 반말 버릇을 고치기 위해 속닥속닥 특별한 방법(‘비밀 모의’)을 꾸미셨어요."
+      },
+      {
+        stage: 1,
+        qNum: 3,
+        page: "교과서 190쪽",
+        chosung: "ㅅㅅㅅㅂ",
+        sentenceBefore: "“그래요, 손자님. 이 할미도 손자님께 말을 높일게요. 늙은 제가 (",
+        blankTarget: "솔선수범",
+        sentenceAfter: ")을 보여야지요.”",
+        meaningHint: "다른 사람보다 앞장서서 먼저 행동하여 모범을 보임",
+        options: ["솔선수범", "우왕좌왕", "작심삼일", "동문서답"],
+        answer: "솔선수범",
+        explanation: "‘솔선수범(率先垂範)’은 다른 사람보다 앞장서서 먼저 모범을 보인다는 뜻이에요."
+      },
+      {
+        stage: 1,
+        qNum: 4,
+        page: "교과서 191쪽",
+        chosung: "ㅂㅇ",
+        sentenceBefore: "“할머니의 (",
+        blankTarget: "배웅",
+        sentenceAfter: ")을 받으며 마트로 향하는 범수의 발걸음이 하늘에 닿을 듯 통통 튀어 올랐어요.”",
+        meaningHint: "떠나는 사람을 잘 다녀오라고 인사로 보내 주는 일 (반대말: 마중)",
+        options: ["배웅", "마중", "꾸중", "부탁"],
+        answer: "배웅",
+        explanation: "할머니께서 “손자님, 조심해서 잘 다녀오세요.”라며 떠나가는 범수를 보내 주시는 것을 ‘배웅’이라고 해요."
+      },
+      {
+        stage: 1,
+        qNum: 5,
+        page: "교과서 191쪽",
+        chosung: "ㅎㄲ",
+        sentenceBefore: "“엄마랑 범수가 말하는 소리를 듣고 옆에 있는 사람들이 (",
+        blankTarget: "힐끔",
+        sentenceAfter: ")거렸어요.”",
+        meaningHint: "고개는 돌리지 않고 눈만 살짝 돌려 자꾸 쳐다보는 모양",
+        options: ["힐끔", "쿨쿨", "엉엉", "펄쩍"],
+        answer: "힐끔",
+        explanation: "마트 사람들이 엄마와 범수의 신기한 대화를 듣고 옆에서 눈을 살짝 돌려 쳐다보는 모습을 ‘힐끔거리다’라고 표현했어요."
+      },
+      {
+        stage: 1,
+        qNum: 6,
+        page: "교과서 192쪽",
+        chosung: "ㅎㅌ",
+        sentenceBefore: "“머리 하얀 할머니는 입술을 부들부들 떨며 (",
+        blankTarget: "호통",
+        sentenceAfter: ")을 쳤어요.”",
+        meaningHint: "매우 크게 화를 내며 꾸짖는 소리",
+        options: ["호통", "칭찬", "박수", "하품"],
+        answer: "호통",
+        explanation: "마트에서 만난 할머니께서 엄마에게 반말을 해 대는 범수를 보고 크게 꾸짖으며 ‘호통’을 치셨어요."
+      },
+      {
+        stage: 1,
+        qNum: 7,
+        page: "교과서 193쪽",
+        chosung: "ㅁㅁ",
+        sentenceBefore: "“사범님은 처음 들어 본 엄마의 이상한 말투에 웃어야 할지 말아야 할지 몰라 (",
+        blankTarget: "머뭇",
+        sentenceAfter: ")거렸어요.”",
+        meaningHint: "선뜻 행동하거나 말하지 못하고 망설이는 모양",
+        options: ["머뭇", "우쭐", "싱긋", "활짝"],
+        answer: "머뭇",
+        explanation: "엄마가 “우리 범수 아드님이 조금 늦으셨죠?”라고 말하자 당황한 사범님이 망설이며 ‘머뭇’거렸어요."
+      },
+      {
+        stage: 1,
+        qNum: 8,
+        page: "교과서 193쪽",
+        chosung: "ㅅㄱ",
+        sentenceBefore: "“다른 아이들이 킥킥대며 (",
+        blankTarget: "수군",
+        sentenceAfter: ")거리는 통에 범수는 얼굴이 빨개졌어요.”",
+        meaningHint: "남이 알아듣지 못하게 작은 목소리로 자꾸 속삭이는 모양",
+        options: ["수군", "두근", "반짝", "터벅"],
+        answer: "수군",
+        explanation: "태권도장 친구들이 범수네 엄마의 높임말을 듣고 자기들끼리 속삭이며 ‘수군’거려서 범수가 창피해졌어요."
+      },
+
+      // ==================== STAGE 2 (8문항: 교과서 188~194쪽 흉내 내는 말/부사어) ====================
+      {
+        stage: 2,
+        qNum: 1,
+        page: "교과서 188쪽",
+        sentenceBefore: "“엄마가 범수를 깨우러 방으로 들어왔어요. 범수는 이불을 (",
+        blankTarget: "푹",
+        sentenceAfter: ") 뒤집어쓰고 벽을 향해 돌아누웠어요.”",
+        meaningHint: "이불이나 모자 따위를 깊숙하게 완전히 덮어쓰는 모양",
+        options: ["푹", "확", "쾅", "씩"],
+        answer: "푹",
+        explanation: "더 자고 싶은 범수가 이불을 머리끝까지 깊숙이 덮어쓰는 모습을 ‘이불을 푹 뒤집어쓰고’라고 표현했어요."
+      },
+      {
+        stage: 2,
+        qNum: 2,
+        page: "교과서 188쪽",
+        sentenceBefore: "“아침이라 입맛도 없는 데다가 꾸중을 잔뜩 들어 기분도 나쁜데, (",
+        blankTarget: "수북이",
+        sentenceAfter: ") 쌓인 밥을 보니 범수는 다시 짜증이 확 났어요.”",
+        meaningHint: "그릇 따위에 물건이나 음식이 불룩하게 많이 담겨 있는 모양",
+        options: ["수북이", "조금씩", "납작하게", "살짝"],
+        answer: "수북이",
+        explanation: "엄마가 밥그릇 가득 불룩하게 담아 놓은 밥의 모양을 ‘수북이 쌓인 밥’이라고 표현했어요."
+      },
+      {
+        stage: 2,
+        qNum: 3,
+        page: "교과서 190쪽",
+        sentenceBefore: "“범수는 정말 자기가 왕자가 된 것 같았어요. 구름 위를 살짝 오른 듯, 바다 위를 걷는 듯 (",
+        blankTarget: "붕붕",
+        sentenceAfter: ") 뜬 느낌이었어요.”",
+        meaningHint: "기분이 아주 좋아서 몸이 가볍게 공중에 떠오르는 듯한 모양",
+        options: ["붕붕", "쾅쾅", "축축", "덜덜"],
+        answer: "붕붕",
+        explanation: "엄마가 왕자처럼 대우해 주자 기분이 들떠서 하늘에 떠오른 것 같은 느낌을 ‘붕붕 뜬 느낌’이라고 했어요."
+      },
+      {
+        stage: 2,
+        qNum: 4,
+        page: "교과서 191쪽",
+        sentenceBefore: "“엄마는 상냥하게 웃으며 대답했는데, 마트에서 만난 할머니는 고개를 (",
+        blankTarget: "절레절레",
+        sentenceAfter: ") 흔들며 인상을 찌푸렸어요.”",
+        meaningHint: "마음에 들지 않거나 부정할 때 고개를 자꾸 옆으로 흔드는 모양",
+        options: ["절레절레", "끄덕끄덕", "빙그레", "통통"],
+        answer: "절레절레",
+        explanation: "엄마에게 반말을 하는 범수가 못마땅해서 고개를 좌우로 흔드는 모습을 ‘절레절레’라고 해요."
+      },
+      {
+        stage: 2,
+        qNum: 5,
+        page: "교과서 192쪽",
+        sentenceBefore: "“‘에잇! 뭐가 이래!’ 범수는 발로 땅을 (",
+        blankTarget: "쾅쾅",
+        sentenceAfter: ") 굴렀어요. 그래도 기분이 풀리지 않았어요.”",
+        meaningHint: "화가 나거나 답답해서 발로 바닥을 힘껏 소리 나게 구르는 모양",
+        options: ["쾅쾅", "살금살금", "사뿐사뿐", "폴짝"],
+        answer: "쾅쾅",
+        explanation: "기분이 엉망이 된 범수가 화가 나서 발로 땅을 세게 구르는 소리와 모양을 ‘쾅쾅’이라고 표현했어요."
+      },
+      {
+        stage: 2,
+        qNum: 6,
+        page: "교과서 194쪽",
+        sentenceBefore: "“‘할머니, 잘못했어. 손자님이라고 부르지 마. 그냥 범수라고 해, 응?’ 범수의 눈에서 눈물이 (",
+        blankTarget: "후드득",
+        sentenceAfter: ") 떨어졌어요.”",
+        meaningHint: "굵은 눈물이나 빗방울이 갑자기 잇따라 떨어지는 모양",
+        options: ["후드득", "반짝반짝", "빙그레", "와락"],
+        answer: "후드득",
+        explanation: "잘못을 뉘우친 범수의 눈에서 굵은 눈물방울이 떨어지는 모습을 ‘후드득’이라고 생생하게 표현했어요."
+      },
+      {
+        stage: 2,
+        qNum: 7,
+        page: "교과서 194쪽",
+        sentenceBefore: "“할머니가 엄마에게 (",
+        blankTarget: "찡긋 / 빙그레",
+        sentenceAfter: ") 눈짓을 보냈어요. 엄마도 살짝 고개를 끄덕이며 (   ) 웃었어요.”",
+        meaningHint: "눈을 살짝 찌푸려 신호를 보내는 모양과 소리 없이 부드럽게 웃는 모양",
+        options: ["찡긋 - 빙그레", "쾅쾅 - 부들부들", "벌떡 - 잽싸게", "절레절레 - 팍팍"],
+        answer: "찡긋 - 빙그레",
+        explanation: "작전이 성공하자 할머니는 ‘찡긋’ 눈짓을 보내고, 엄마는 ‘빙그레’ 미소를 지으셨어요."
+      },
+      {
+        stage: 2,
+        qNum: 8,
+        page: "교과서 194쪽",
+        sentenceBefore: "“엄마가 해 주는 ‘아들’이란 말이 이렇게 달콤하게 들렸던 적이 없었어요. 엄마가 해 주는 반말이 (",
+        blankTarget: "푹신푹신한",
+        sentenceAfter: ") 솜이불처럼 편안했어요.”",
+        meaningHint: "솜이불이나 방석처럼 매우 부드럽고 탄력이 있어 포근한 느낌",
+        options: ["푹신푹신한", "딱딱한", "까칠까칠한", "차가운"],
+        answer: "푹신푹신한",
+        explanation: "이야기의 마지막 문장! 엄마의 다정한 말을 ‘푹신푹신한 솜이불’에 비유하여 편안한 마음을 나타냈어요."
+      },
+
+      // ==================== STAGE 3 (8문항: 교과서 195쪽 ‘낱말 알기’ 낱말 관계 삼총사) ====================
+      {
+        stage: 3,
+        qNum: 1,
+        page: "교과서 195쪽 ‘낱말 알기’",
+        wordPair: ["식탁", "가구"],
+        contextQuote: "“범수는 식탁에서 벌떡 일어났어요.” (195쪽)",
+        questionText: "교과서 195쪽에 나온 [식탁 ↔ 가구]는 어떤 낱말 관계일까요?",
+        meaningHint: "가구 안에는 식탁, 의자, 책상, 침대 등이 모두 들어가요!",
+        options: [
+          "한 낱말이 다른 낱말의 뜻을 포함하는 관계",
+          "서로 뜻이 비슷한 관계",
+          "서로 뜻이 반대인 관계",
+          "아무 관련이 없는 관계"
+        ],
+        answer: "한 낱말이 다른 낱말의 뜻을 포함하는 관계",
+        explanation: "‘가구’는 ‘식탁’을 비롯하여 책상, 침대, 옷장 등을 모두 아우르는 큰 낱말이므로 ‘한 낱말이 다른 낱말의 뜻을 포함하는 관계’입니다."
+      },
+      {
+        stage: 3,
+        qNum: 2,
+        page: "교과서 195쪽 ‘낱말 알기’",
+        wordPair: ["고치다", "바로잡다"],
+        contextQuote: "“범수는 반말을 고치고 싶은 마음이 전혀 없었어요.” (195쪽)",
+        questionText: "교과서 195쪽에 나온 [고치다 ↔ 바로잡다]는 어떤 낱말 관계일까요?",
+        meaningHint: "‘반말 버릇을 고치다’와 ‘반말 버릇을 바로잡다’는 뜻이 서로 같아요!",
+        options: [
+          "서로 뜻이 비슷한 관계",
+          "서로 뜻이 반대인 관계",
+          "한 낱말이 다른 낱말의 뜻을 포함하는 관계",
+          "소리가 같은 관계"
+        ],
+        answer: "서로 뜻이 비슷한 관계",
+        explanation: "‘고치다’와 ‘바로잡다’는 잘못된 버릇이나 상태를 바르게 만든다는 뜻이 서로 비슷한 낱말이에요."
+      },
+      {
+        stage: 3,
+        qNum: 3,
+        page: "교과서 195쪽 ‘낱말 알기’",
+        wordPair: ["배우다", "가르치다"],
+        contextQuote: "“우리 범수가 이참에 단단히 배우겠구먼.” (195쪽)",
+        questionText: "교과서 195쪽에 나온 [배우다 ↔ 가르치다]는 어떤 낱말 관계일까요?",
+        meaningHint: "학생은 지식을 ‘배우고’, 선생님은 지식을 ‘가르쳐요’!",
+        options: [
+          "서로 뜻이 반대인 관계",
+          "서로 뜻이 비슷한 관계",
+          "한 낱말이 다른 낱말의 뜻을 포함하는 관계",
+          "높임말과 반말의 관계"
+        ],
+        answer: "서로 뜻이 반대인 관계",
+        explanation: "‘배우다’와 ‘가르치다’는 서로 뜻이 상대되거나 반대인 관계에 있는 낱말입니다."
+      },
+      {
+        stage: 3,
+        qNum: 4,
+        page: "교과서 191·195쪽 연계",
+        wordPair: ["콩나물 · 떡갈비", "❓"],
+        contextQuote: "“아드님, 콩나물 반찬은 어떠세요?” / “오늘 저녁 반찬은 뭐야?” “떡갈비.” (191쪽)",
+        questionText: "지문에 나온 ‘콩나물’, ‘떡갈비’의 뜻을 모두 포함하는 낱말(❓)은 무엇일까요?",
+        meaningHint: "밥과 함께 먹는 음식들을 통틀어 부르는 지문 속 낱말이에요!",
+        options: ["반찬", "학용품", "과일", "장난감"],
+        answer: "반찬",
+        explanation: "‘반찬’은 콩나물, 떡갈비, 김치 등의 뜻을 모두 포함하는 낱말이에요."
+      },
+      {
+        stage: 3,
+        qNum: 5,
+        page: "교과서 192·195쪽 연계",
+        wordPair: ["아이스크림 · 과자 · 초콜릿", "❓"],
+        contextQuote: "“아직 아이스크림도, 과자도, 초콜릿도 사지 않았지만, 이상한 할머니 때문에 군것질을 할 마음이 싹 사라져 버렸어요.” (192쪽)",
+        questionText: "아이스크림, 과자, 초콜릿처럼 입이 심심할 때 먹는 음식이나 그 일을 포함하는 지문 속 낱말은?",
+        meaningHint: "교과서 192쪽 문장 속에서 힌트를 찾아보세요! (ㄱㄱㅈ)",
+        options: ["군것질(간식)", "아침밥", "태권도", "세면도구"],
+        answer: "군것질(간식)",
+        explanation: "아이스크림, 과자, 초콜릿은 모두 ‘군것질(또는 간식)’에 포함되는 낱말들이에요."
+      },
+      {
+        stage: 3,
+        qNum: 6,
+        page: "교과서 188·189·195쪽 연계",
+        wordPair: ["꾸중", "❓ (비슷한 말)"],
+        contextQuote: "“꾸중을 잔뜩 들어 기분도 나쁜데…”(188쪽) / “엄마가 야단치는 소리…”(189쪽)",
+        questionText: "지문에 나온 [꾸중]과 서로 뜻이 비슷한 관계에 있는 낱말은 무엇일까요?",
+        meaningHint: "잘못했을 때 어른께 혼나는 말을 뜻해요! (ㅇㄷ)",
+        options: ["야단", "칭찬", "선물", "배웅"],
+        answer: "야단",
+        explanation: "‘꾸중’과 ‘야단(또는 꾸지람)’은 잘못을 꾸짖는다는 뜻이 서로 비슷한 관계예요."
+      },
+      {
+        stage: 3,
+        qNum: 7,
+        page: "교과서 190·195쪽 연계",
+        wordPair: ["반말", "❓ (반대말)"],
+        contextQuote: "“이 어미가 아드님께 높임말을 못 가르치고 반말 버릇을 가르쳐 놨으니…” (190쪽)",
+        questionText: "지문에서 가장 중요한 두 낱말! [반말]과 서로 뜻이 반대인 관계의 낱말은?",
+        meaningHint: "상대를 존중하고 높여 부를 때 쓰는 말이에요!",
+        options: ["높임말", "혼잣말", "거짓말", "귓속말"],
+        answer: "높임말",
+        explanation: "상대를 낮추거나 편하게 하는 ‘반말’과 대상을 높여 말하는 ‘높임말’은 서로 뜻이 반대인 관계입니다."
+      },
+      {
+        stage: 3,
+        qNum: 8,
+        page: "교과서 188·189·195쪽 연계",
+        wordPair: ["앉다", "일어나다"],
+        contextQuote: "“범수는 식탁 앞에 앉았어요.”(188쪽) / “범수는 식탁에서 벌떡 일어났어요.”(189쪽)",
+        questionText: "지문에 나온 [앉다 ↔ 일어나다]는 어떤 낱말 관계일까요?",
+        meaningHint: "자리에 ‘앉는’ 동작과 자리에서 ‘일어나는’ 동작을 비교해 보세요!",
+        options: [
+          "서로 뜻이 반대인 관계",
+          "서로 뜻이 비슷한 관계",
+          "한 낱말이 다른 낱말의 뜻을 포함하는 관계",
+          "높임의 뜻이 있는 관계"
+        ],
+        answer: "서로 뜻이 반대인 관계",
+        explanation: "‘앉다’와 ‘일어나다’는 동작의 방향과 상태가 서로 반대인 관계의 낱말이에요."
+      },
+
+      // ==================== STAGE 4 (8문항: 교과서 196·210쪽 높임 표현 바로잡기 & 짝짓기) ====================
+      {
+        stage: 4,
+        qNum: 1,
+        page: "교과서 196쪽 (장면 가)",
+        speaker: "범수 → 엄마",
+        wrongDialogue: "“밥 안 먹어. 더 잘 거야.”",
+        situationDesc: "아침에 엄마가 “범수야, 일어나야지. 밥 다 차려 놨다.”라고 깨우시는 상황입니다.",
+        questionText: "교과서 196쪽 [장면 가]에서 범수의 반말을 엄마께 알맞은 높임 표현으로 고친 것은?",
+        meaningHint: "웃어른인 엄마께는 문장 끝에 ‘-어요/아요’를 붙여 공손하게 말해야 해요.",
+        options: [
+          "“밥 안 먹어요. 더 잘 거예요.”",
+          "“진지 안 드셔. 더 주무실 거야.”",
+          "“밥 안 먹는다니까! 깨우지 마.”",
+          "“제가 진지 안 잡수실게요.”"
+        ],
+        answer: "“밥 안 먹어요. 더 잘 거예요.”",
+        explanation: "엄마는 웃어른이므로 반말 대신 ‘요’를 사용하여 “밥 안 먹어요. 더 잘 거예요.”라고 높임 표현을 써야 합니다."
+      },
+      {
+        stage: 4,
+        qNum: 2,
+        page: "교과서 196쪽 (장면 나)",
+        speaker: "범수 ↔ 엄마",
+        wrongDialogue: "범수: “오늘 저녁 반찬은 뭐야?” / “떡갈비.”",
+        situationDesc: "마트에서 저녁 반찬거리를 고르며 엄마와 대화하는 상황입니다.",
+        questionText: "교과서 196쪽 [장면 나]에서 범수가 엄마께 해야 할 바른 높임 표현은 무엇일까요?",
+        meaningHint: "질문할 때와 대답할 때 모두 끝에 ‘-예요’를 붙여 보세요!",
+        options: [
+          "“오늘 저녁 반찬은 뭐예요?” / “떡갈비요(떡갈비예요).”",
+          "“오늘 저녁 반찬은 뭐니?” / “떡갈비야.”",
+          "“오늘 저녁 반찬이 무엇이십니까?” / “떡갈비이십니다.”",
+          "“저녁 반찬 빨리 말해 줘!” / “떡갈비 내놔.”"
+        ],
+        answer: "“오늘 저녁 반찬은 뭐예요?” / “떡갈비요(떡갈비예요).”",
+        explanation: "엄마께 질문하고 답할 때는 “오늘 저녁 반찬은 뭐예요?”, “떡갈비예요(떡갈비요).”처럼 높임 표현을 사용해야 해요."
+      },
+      {
+        stage: 4,
+        qNum: 3,
+        page: "교과서 196쪽 (장면 다)",
+        speaker: "할머니 → 범수",
+        wrongDialogue: "할머니: “아이고, 우리 손자님 왜 그러세요?”",
+        situationDesc: "태권도장에서 돌아온 범수가 울면서 사과하는 상황입니다.",
+        questionText: "교과서 196쪽 [장면 다]에서 할머니가 손자인 범수에게 하기에 자연스러운 표현은?",
+        meaningHint: "할머니는 범수보다 웃어른이시므로 손자에게 높임말 대신 다정한 반말을 쓰시는 것이 자연스러워요.",
+        options: [
+          "“아이고, 우리 손자(범수) 왜 그래?”",
+          "“아이고, 우리 손자님께서 어찌 울고 계십니까?”",
+          "“손자님, 진지 잡수셨습니까?”",
+          "“저희 손자님이 화가 나셨군요.”"
+        ],
+        answer: "“아이고, 우리 손자(범수) 왜 그래?”",
+        explanation: "할머니께서 손자인 범수에게 ‘손자님’, ‘그러세요’라고 높임말을 쓰시는 것은 어색하므로 “아이고, 우리 손자 왜 그래?”로 고치는 것이 알맞아요."
+      },
+      {
+        stage: 4,
+        qNum: 4,
+        page: "교과서 196쪽 (장면 다)",
+        speaker: "범수 → 할머니",
+        wrongDialogue: "범수: “할머니, 잘못했어. 손자님이라고 부르지 마. 그냥 ‘범수’라고 해, 응?”",
+        situationDesc: "범수가 할머니께 잘못을 빌며 예전처럼 불러 달라고 부탁하는 장면입니다.",
+        questionText: "교과서 196쪽 [장면 다]의 밑줄 친 범수의 말을 바른 높임 표현으로 고친 것은?",
+        meaningHint: "‘잘못했어 → 잘못했어요’, ‘부르지 마 → 부르지 마세요’, ‘응? → 네?’로 고쳐 보세요!",
+        options: [
+          "“할머니, 잘못했어요. 손자님이라고 부르지 마세요. 그냥 ‘범수’라고 하세요(불러 주세요), 네?”",
+          "“할머니, 내가 잘못했다니까! 그냥 범수라고 불러!”",
+          "“할머니께서 잘못하셨어요. 저한테 반말 쓰지 마세요.”",
+          "“할미야, 잘못했어. 그냥 범수라고 해 줘.”"
+        ],
+        answer: "“할머니, 잘못했어요. 손자님이라고 부르지 마세요. 그냥 ‘범수’라고 하세요(불러 주세요), 네?”",
+        explanation: "할머니께는 공손하게 “잘못했어요. 손자님이라고 부르지 마세요. 그냥 ‘범수’라고 불러 주세요, 네?”라고 말해야 합니다."
+      },
+      {
+        stage: 4,
+        qNum: 5,
+        page: "교과서 193쪽 (태권도장 장면)",
+        speaker: "엄마 → 태권도 사범님",
+        wrongDialogue: "엄마: “사범님, 죄송해요. 우리 범수 아드님이 조금 늦으셨죠?”",
+        situationDesc: "엄마가 태권도장 사범님께 인사하며 범수가 늦은 것을 사과하는 장면입니다.",
+        questionText: "엄마가 사범님께 자신의 아들(범수)을 가리켜 말할 때, 바르게 고친 표현은?",
+        meaningHint: "다른 사람에게 내 가족(특히 어린 자녀)을 말할 때는 ‘아드님/늦으셨죠’처럼 높이지 않아요!",
+        options: [
+          "“사범님, 죄송해요. 우리 아들 범수가 조금 늦었죠?”",
+          "“사범님, 죄송해요. 저희 범수 왕자님께서 늦으셨습니다.”",
+          "“사범아, 미안해. 우리 범수가 좀 늦었어.”",
+          "“사범님, 우리 범수 아드님께 빨리 운동 가르치세요.”"
+        ],
+        answer: "“사범님, 죄송해요. 우리 아들 범수가 조금 늦었죠?”",
+        explanation: "‘아드님’은 다른 사람의 아들을 높여 부르는 말이에요. 사범님께 자기 아들을 말할 때는 “우리 범수가 조금 늦었죠?”라고 해야 바른 표현입니다."
+      },
+      {
+        stage: 4,
+        qNum: 6,
+        page: "교과서 189쪽 (하교 후 장면)",
+        speaker: "범수 → 엄마",
+        wrongDialogue: "범수: “엄마, 물 줘!”",
+        situationDesc: "학교를 마치고 집에 돌아온 범수가 엄마에게 물을 달라고 하는 상황입니다.",
+        questionText: "집에 돌아온 범수가 엄마께 인사하고 물을 부탁할 때 알맞은 높임 표현은?",
+        meaningHint: "학교에 다녀왔을 때의 인사와 ‘줘’의 높임 표현인 ‘주세요’를 떠올려 보세요!",
+        options: [
+          "“엄마, 학교 다녀왔습니다. 물 좀 주세요!”",
+          "“엄마, 나 왔어! 냉수 대령해!”",
+          "“어머님, 제가 물을 하사하겠소.”",
+          "“엄마, 물이나 빨리 가져와.”"
+        ],
+        answer: "“엄마, 학교 다녀왔습니다. 물 좀 주세요!”",
+        explanation: "외출했다가 돌아오면 어른께 먼저 인사를 드리고, 부탁할 때는 “엄마, 물 좀 주세요.”라고 공손히 말해야 해요."
+      },
+      {
+        stage: 4,
+        qNum: 7,
+        page: "교과서 188~196·210쪽",
+        speaker: "높임의 뜻이 있는 낱말 퀴즈",
+        wrongDialogue: "밥 → 진지 / 먹다 → ( ❓ )",
+        situationDesc: "교과서 210쪽처럼 본래의 낱말과 높임의 뜻이 있는 낱말을 짝지어 봅시다.",
+        questionText: "지문 속에서 ‘먹다’를 높여 표현한 낱말이 아닌 것은 무엇일까요?",
+        meaningHint: "“진지 드세요”, “맛있게 잡수세요”는 모두 먹는 것을 높인 말이에요. 말하는 것을 높인 말은 무엇일까요?",
+        options: [
+          "말씀하시다",
+          "드시다 (드세요)",
+          "잡수시다 (잡수세요)",
+          "진지를 드시다"
+        ],
+        answer: "말씀하시다",
+        explanation: "‘드시다’와 ‘잡수시다’는 ‘먹다’를 높이는 낱말이고, ‘말씀하시다’는 ‘말하다’를 높이는 낱말이에요!"
+      },
+      {
+        stage: 4,
+        qNum: 8,
+        page: "교과서 177·189·190쪽",
+        speaker: "나를 낮추어 상대를 높이는 낱말",
+        wrongDialogue: "“손자님! 가방은 ( ❓ )가 정리할게요.” (189쪽)",
+        situationDesc: "웃어른이나 높여야 할 상대에게 ‘나’를 낮추어 부르는 낱말을 찾아봅시다.",
+        questionText: "친구에게는 ‘내가’라고 말하지만, 웃어른께 나를 낮추어 말할 때 빈칸(❓)에 쓰는 알맞은 낱말은?",
+        meaningHint: "교과서 177쪽 생각 열기: 친구에게는 “내가 지난 주말에…”, 선생님께는 “(  )가 지난 주말에…”",
+        options: [
+          "저 (제가)",
+          "나 (내가)",
+          "너 (네가)",
+          "우리 (우리가)"
+        ],
+        answer: "저 (제가)",
+        explanation: "웃어른과 대화하거나 공식적인 자리에서는 ‘나(내가)’ 대신 자신을 낮추는 말인 ‘저(제가)’를 사용합니다."
+      }
+    ];
+
+    /*************************************************************************
+     * 3. 앱 상태 관리 변수
+     *************************************************************************/
+    let playMode = 'solo';          // 'solo' | 'team'
+    let teamCount = 4;              // 2 | 3 | 4
+    let currentTeamTurn = 0;        // 0 ~ teamCount-1
+    let teams = [
+      { name: "1모둠 (햇살)", icon: "☀️", score: 0, color: "bg-amber-100 border-amber-500 text-amber-950" },
+      { name: "2모둠 (구름)", icon: "☁️", score: 0, color: "bg-sky-100 border-sky-500 text-sky-950" },
+      { name: "3모둠 (별빛)", icon: "⭐", score: 0, color: "bg-emerald-100 border-emerald-500 text-emerald-950" },
+      { name: "4모둠 (무지개)", icon: "🌈", score: 0, color: "bg-purple-100 border-purple-500 text-purple-950" }
+    ];
+
+    let activeStageMode = 1;        // 1, 2, 3, 4 또는 'all'
+    let currentQuestionList = [];   // 현재 진행 중인 문항 배열
+    let currentQIndex = 0;          // 현재 문항 인덱스
+    let soloScore = 0;
+    let currentStreak = 0;
+    let solvedCount = 0;            // 맞힌 문항 수 (온도계 계산용)
+    let isQuestionAnswered = false;
+    let stage1DirectInputMode = false; // 스테이지 1에서 객관식(false) vs 주관식(true)
+
+    /*************************************************************************
+     * 4. 홈 화면 & 모드 설정 함수
+     *************************************************************************/
+    function selectPlayMode(mode) {
+      playClick();
+      playMode = mode;
+      const btnSolo = document.getElementById('modeBtnSolo');
+      const btnTeam = document.getElementById('modeBtnTeam');
+      const teamConfigBox = document.getElementById('teamConfigBox');
+
+      if (mode === 'solo') {
+        btnSolo.className = "btn-3d p-4 text-left flex items-center gap-4 bg-amber-300 ring-4 ring-amber-400/50";
+        btnTeam.className = "btn-3d p-4 text-left flex items-center gap-4 bg-stone-100 hover:bg-amber-50";
+        teamConfigBox.classList.add('hidden');
+      } else {
+        btnTeam.className = "btn-3d p-4 text-left flex items-center gap-4 bg-indigo-200 ring-4 ring-indigo-400/50";
+        btnSolo.className = "btn-3d p-4 text-left flex items-center gap-4 bg-stone-100 hover:bg-amber-50";
+        teamConfigBox.classList.remove('hidden');
+      }
+    }
+
+    function setTeamCount(cnt) {
+      playClick();
+      teamCount = cnt;
+      [2, 3, 4].forEach(n => {
+        const btn = document.getElementById(`teamCnt${n}`);
+        if (n === cnt) {
+          btn.className = "btn-3d px-4 py-1.5 font-title text-base bg-indigo-600 text-white";
+        } else {
+          btn.className = "btn-3d px-4 py-1.5 font-title text-base bg-white text-stone-800";
+        }
+      });
+    }
+
+    function showScreen(screenId) {
+      ['screenHome', 'screenQuiz', 'screenMemory', 'screenResult'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goHome() {
+      playClick();
+      showScreen('screenHome');
+    }
+
+    /*************************************************************************
+     * 5. 퀴즈 시작 및 렌더링 로직
+     *************************************************************************/
+    function startQuiz(stageSelection) {
+      playClick();
+      activeStageMode = stageSelection;
+
+      if (stageSelection === 'all') {
+        currentQuestionList = [...QUIZ_DB];
+      } else {
+        currentQuestionList = QUIZ_DB.filter(q => q.stage === stageSelection);
+      }
+
+      currentQIndex = 0;
+      solvedCount = 0;
+      currentStreak = 0;
+      if (stageSelection !== 'all') {
+        // 개별 스테이지 시작 시 점수 초기화하지 않고 누적하거나 새 라운드로 깔끔하게 관리
+      }
+
+      // 모둠 대항전 UI 표시 여부
+      const teamBoard = document.getElementById('teamScoreboard');
+      if (playMode === 'team') {
+        teamBoard.classList.remove('hidden');
+        if (currentTeamTurn >= teamCount) currentTeamTurn = 0;
+        renderTeamScoreboard();
+      } else {
+        teamBoard.classList.add('hidden');
+      }
+
+      showScreen('screenQuiz');
+      updateThermometerAndCharacter();
+      renderQuestion();
+    }
+
+    function restartCurrentStage() {
+      startQuiz(activeStageMode);
+    }
+
+    // 모둠 점수판 렌더링
+    function renderTeamScoreboard() {
+      const container = document.getElementById('teamCardsContainer');
+      container.innerHTML = '';
+
+      for (let i = 0; i < teamCount; i++) {
+        const t = teams[i];
+        const isTurn = (i === currentTeamTurn);
+        const card = document.createElement('div');
+        card.className = `rounded-2xl border-3 p-3 transition-all flex flex-col justify-between cursor-pointer ${
+          isTurn 
+            ? 'bg-amber-200 border-stone-900 ring-4 ring-amber-400 shadow-md scale-[1.02]' 
+            : 'bg-white border-stone-400 opacity-85 hover:opacity-100'
+        }`;
+        card.onclick = (e) => {
+          if (e.target.tagName === 'BUTTON') return;
+          playClick();
+          currentTeamTurn = i;
+          renderTeamScoreboard();
+        };
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-title text-base sm:text-lg text-stone-900 flex items-center gap-1">
+              <span>${t.icon}</span> <span>${t.name}</span>
+            </span>
+            ${isTurn ? '<span class="bg-rose-500 text-white text-[11px] font-title px-2 py-0.5 rounded-full animate-pulse">현재 차례!</span>' : ''}
+          </div>
+          <div class="my-2 text-center font-title text-2xl sm:text-3xl text-indigo-900">
+            ${t.score}<span class="text-base ml-0.5">점</span>
+          </div>
+          <div class="flex items-center justify-center gap-1.5">
+            <button onclick="adjustTeamScore(${i}, -5)" class="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 border border-rose-500 text-rose-900 font-title text-xs">-5점</button>
+            <button onclick="adjustTeamScore(${i}, 10)" class="px-2.5 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 border border-emerald-600 text-emerald-900 font-title text-xs">+10점</button>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function adjustTeamScore(teamIdx, delta) {
+      playClick();
+      teams[teamIdx].score = Math.max(0, teams[teamIdx].score + delta);
+      renderTeamScoreboard();
+    }
+
+    function nextTeamTurn() {
+      playClick();
+      currentTeamTurn = (currentTeamTurn + 1) % teamCount;
+      renderTeamScoreboard();
+    }
+
+    // 현재 문제 화면 렌더링
+    function renderQuestion() {
+      isQuestionAnswered = false;
+      const q = currentQuestionList[currentQIndex];
+      const stageMeta = STAGE_INFO[q.stage];
+
+      // 상단 배지 및 하단 타이틀 업데이트
+      document.getElementById('stageBadge').textContent = stageMeta.badge;
+      document.getElementById('stageTitleFooter').textContent = stageMeta.title;
+      document.getElementById('questionProgressBadge').textContent = `문제 ${currentQIndex + 1} / ${currentQuestionList.length}`;
+      document.getElementById('textbookPageBadge').innerHTML = `<i class="ph-bold ph-book-open"></i> ${q.page}`;
+      document.getElementById('questionPrompt').innerHTML = `<i class="ph-fill ph-chat-circle-dots text-xl"></i> <span>${stageMeta.prompt}</span>`;
+
+      // 빠른 탭 하이라이트
+      [1, 2, 3, 4].forEach(s => {
+        const tab = document.getElementById(`quickTab${s}`);
+        if (q.stage === s) {
+          tab.className = "btn-3d py-1.5 text-xs font-title bg-amber-300 text-stone-900";
+        } else {
+          tab.className = "btn-3d py-1.5 text-xs font-title bg-white text-stone-600";
+        }
+      });
+
+      // 이전 문제 버튼 활성화 여부
+      document.getElementById('btnPrevQ').disabled = (currentQIndex === 0);
+
+      // 힌트 및 해설 패널 숨기기
+      document.getElementById('hintBubble').classList.add('hidden');
+      document.getElementById('feedbackPanel').classList.add('hidden');
+
+      // 스테이지 1일 때만 '객관식/주관식 전환' 버튼 표시
+      const btnInputToggle = document.getElementById('btnInputModeToggle');
+      if (q.stage === 1) {
+        btnInputToggle.classList.remove('hidden');
+        document.getElementById('inputModeLabel').textContent = stage1DirectInputMode ? '객관식 보기로 풀기' : '초성 직접 입력하기';
+      } else {
+        btnInputToggle.classList.add('hidden');
+      }
+
+      // 문제 본문 박스 구성 (스테이지별 맞춤형 비주얼)
+      const contentBox = document.getElementById('questionContentBox');
+      if (q.stage === 1) {
+        contentBox.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span class="bg-amber-300 border-2 border-stone-800 text-stone-900 font-title px-3.5 py-1 rounded-xl text-base sm:text-lg">
+              🔤 초성 힌트 : <strong class="tracking-widest text-rose-700">${q.chosung}</strong>
+            </span>
+            <span class="text-xs sm:text-sm font-bold text-stone-600 bg-white px-3 py-1 rounded-lg border border-stone-300">
+              뜻풀이: ${q.meaningHint}
+            </span>
+          </div>
+          <p class="quiz-sentence font-story font-bold text-2xl sm:text-3xl text-stone-900 leading-relaxed break-keep">
+            ${q.sentenceBefore}
+            <span id="blankSlot" class="inline-block bg-white border-b-4 border-rose-500 px-4 py-0.5 mx-1 rounded-xl text-rose-600 font-title">
+              ( ❓ )
+            </span>
+            ${q.sentenceAfter}
+          </p>
+        `;
+      } else if (q.stage === 2) {
+        contentBox.innerHTML = `
+          <div class="mb-2">
+            <span class="inline-block bg-orange-200 border border-stone-800 text-stone-900 font-title text-xs sm:text-sm px-3 py-0.5 rounded-full">
+              ✨ 인물의 행동과 기분을 생생하게!
+            </span>
+          </div>
+          <p class="quiz-sentence font-story font-bold text-2xl sm:text-3xl text-stone-900 leading-relaxed break-keep">
+            ${q.sentenceBefore}
+            <span id="blankSlot" class="inline-block bg-white border-b-4 border-amber-500 px-4 py-0.5 mx-1 rounded-xl text-amber-700 font-title">
+              ( ❓ )
+            </span>
+            ${q.sentenceAfter}
+          </p>
+        `;
+      } else if (q.stage === 3) {
+        contentBox.innerHTML = `
+          <div class="text-xs sm:text-sm font-story font-bold text-stone-600 bg-white/90 px-3.5 py-1.5 rounded-xl border border-stone-300 mb-4 inline-block">
+            📖 지문 속 문장: ${q.contextQuote}
+          </div>
+          <div class="flex items-center justify-center gap-3 sm:gap-6 my-2">
+            <div class="bg-white border-3 border-stone-800 rounded-2xl px-5 py-3 shadow-sm font-title text-xl sm:text-3xl text-indigo-900">
+              ${q.wordPair[0]}
+            </div>
+            <div class="font-title text-2xl sm:text-3xl text-rose-500">↔</div>
+            <div id="blankSlot" class="bg-emerald-100 border-3 border-stone-800 rounded-2xl px-5 py-3 shadow-sm font-title text-xl sm:text-3xl text-emerald-900">
+              ${q.wordPair[1]}
+            </div>
+          </div>
+          <p class="quiz-sentence font-bold text-xl sm:text-2xl text-stone-900 text-center mt-4 break-keep">
+            ${q.questionText}
+          </p>
+        `;
+      } else if (q.stage === 4) {
+        contentBox.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="bg-purple-600 text-white font-title text-xs sm:text-sm px-3 py-1 rounded-full">
+              🗣️ ${q.speaker}
+            </span>
+            <span class="text-xs sm:text-sm font-bold text-stone-600">${q.situationDesc}</span>
+          </div>
+          <div class="bg-white border-3 border-stone-800 rounded-2xl p-4 my-2 shadow-xs">
+            <div class="text-xs font-bold text-rose-600 mb-1">고쳐야 할 표현 / 문제 카드</div>
+            <p class="quiz-sentence font-story font-bold text-2xl sm:text-3xl text-stone-900 break-keep">
+              ${q.wrongDialogue}
+            </p>
+          </div>
+          <p class="font-bold text-lg sm:text-xl text-purple-950 mt-3 break-keep">
+            👉 ${q.questionText}
+          </p>
+        `;
+      }
+
+      // 보기 영역 렌더링 (객관식 vs 스테이지1 직접입력)
+      const optionsGrid = document.getElementById('optionsGrid');
+      const directInputBox = document.getElementById('directInputBox');
+
+      if (q.stage === 1 && stage1DirectInputMode) {
+        optionsGrid.classList.add('hidden');
+        directInputBox.classList.remove('hidden');
+        document.getElementById('directChosungBadge').textContent = q.chosung;
+        const inputEl = document.getElementById('directAnswerInput');
+        inputEl.value = '';
+        inputEl.disabled = false;
+        setTimeout(() => inputEl.focus(), 100);
+      } else {
+        directInputBox.classList.add('hidden');
+        optionsGrid.classList.remove('hidden');
+        optionsGrid.innerHTML = '';
+
+        // 보기 순서 섞기 (원본 배열 보존)
+        const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+        shuffledOptions.forEach((optText, idx) => {
+          const btn = document.createElement('button');
+          btn.className = "option-btn p-4 sm:p-5 text-left flex items-center gap-3.5 w-full";
+          btn.innerHTML = `
+            <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-300 border-2 border-stone-800 font-title text-lg sm:text-xl flex items-center justify-center shrink-0 text-stone-900">
+              ${idx + 1}
+            </span>
+            <span class="option-text font-bold text-lg sm:text-xl text-stone-800 break-keep leading-snug">
+              ${optText}
+            </span>
+          `;
+          btn.onclick = () => handleSelectOption(optText, btn);
+          optionsGrid.appendChild(btn);
+        });
+      }
+    }
+
+    function toggleStage1InputMode() {
+      playClick();
+      stage1DirectInputMode = !stage1DirectInputMode;
+      renderQuestion();
+    }
+
+    // 힌트 표시
+    function showHint() {
+      playHintSound();
+      const q = currentQuestionList[currentQIndex];
+      const hintBubble = document.getElementById('hintBubble');
+      const hintText = document.getElementById('hintText');
+
+      if (q.stage === 1) {
+        hintText.innerHTML = `초성은 <strong class="text-rose-600">${q.chosung}</strong>이고, 뜻은 <strong>“${q.meaningHint}”</strong>예요! (${q.page})`;
+      } else {
+        hintText.innerHTML = `${q.meaningHint} <span class="text-stone-500">(${q.page})</span>`;
+      }
+      hintBubble.classList.remove('hidden');
+    }
+
+    // 객관식 정답 처리
+    function handleSelectOption(selectedText, btnElement) {
+      if (isQuestionAnswered) return;
+      const q = currentQuestionList[currentQIndex];
+      const isCorrect = (selectedText === q.answer);
+
+      processAnswerResult(isCorrect, selectedText, btnElement);
+    }
+
+    // 주관식(스테이지 1) 정답 처리
+    function submitDirectAnswer() {
+      if (isQuestionAnswered) return;
+      const inputEl = document.getElementById('directAnswerInput');
+      const userVal = inputEl.value.trim().replace(/\s+/g, '');
+      if (!userVal) return;
+
+      const q = currentQuestionList[currentQIndex];
+      const cleanAnswer = q.answer.replace(/\s+/g, '');
+      const isCorrect = (userVal === cleanAnswer);
+      inputEl.disabled = true;
+
+      processAnswerResult(isCorrect, inputEl.value.trim(), null);
+    }
+
+    // 공통 정오답 피드백 및 점수 업데이트
+    function processAnswerResult(isCorrect, userChoice, clickedBtn) {
+      const q = currentQuestionList[currentQIndex];
+      const feedbackPanel = document.getElementById('feedbackPanel');
+      const feedbackIcon = document.getElementById('feedbackIcon');
+      const feedbackTitle = document.getElementById('feedbackTitle');
+      const feedbackDesc = document.getElementById('feedbackDesc');
+      const btnRetry = document.getElementById('btnRetryQuestion');
+
+      // 빈칸 채움 효과
+      const blankSlot = document.getElementById('blankSlot');
+
+      if (isCorrect) {
+        isQuestionAnswered = true;
+        playCorrectSound();
+
+        if (clickedBtn) {
+          clickedBtn.classList.add('correct');
+          // 나머지 버튼 비활성화
+          Array.from(document.getElementById('optionsGrid').children).forEach(b => b.disabled = true);
+        }
+
+        if (blankSlot && q.stage <= 2) {
+          blankSlot.textContent = q.answer;
+          blankSlot.className = "inline-block bg-emerald-200 border-2 border-emerald-700 px-4 py-0.5 mx-1 rounded-xl text-emerald-950 font-title animate-pop";
+        }
+
+        // 점수 및 온도계 증가
+        currentStreak++;
+        solvedCount++;
+        const bonus = currentStreak >= 3 ? 15 : 10;
+        soloScore += bonus;
+
+        if (playMode === 'team') {
+          teams[currentTeamTurn].score += 10;
+          renderTeamScoreboard();
+        }
+
+        updateScoreUI();
+        updateThermometerAndCharacter();
+
+        // 피드백 패널 스타일 (정답)
+        feedbackPanel.className = "rounded-2xl border-3 border-emerald-700 bg-emerald-50 p-4 sm:p-5 animate-pop";
+        feedbackIcon.textContent = "⭕";
+        feedbackTitle.innerHTML = `정답입니다! <span class="text-emerald-700 text-base">(${playMode === 'team' ? teams[currentTeamTurn].name + ' +10점!' : '+' + bonus + '점!'})</span>`;
+        feedbackDesc.innerHTML = `<strong>[정답: ${q.answer}]</strong> ${q.explanation}`;
+        btnRetry.classList.add('hidden');
+      } else {
+        playWrongSound();
+        currentStreak = 0;
+        updateScoreUI();
+
+        if (clickedBtn) {
+          clickedBtn.classList.add('wrong');
+          clickedBtn.disabled = true;
+        }
+
+        // 피드백 패널 스타일 (오답 - 다시 고르거나 해설 보고 넘어가기 모두 가능)
+        feedbackPanel.className = "rounded-2xl border-3 border-rose-600 bg-rose-50 p-4 sm:p-5 animate-pop";
+        feedbackIcon.textContent = "🤔";
+        feedbackTitle.innerHTML = `아차! 다시 한번 생각해 볼까요?`;
+        feedbackDesc.innerHTML = `방금 고른 <strong>‘${userChoice}’</strong> 대신 교과서 문맥을 다시 떠올려 보세요! <br/><span class="text-stone-600 text-sm">💡 힌트: ${q.meaningHint}</span>`;
+        btnRetry.classList.remove('hidden');
+      }
+
+      feedbackPanel.classList.remove('hidden');
+    }
+
+    function retryCurrentQuestion() {
+      playClick();
+      const q = currentQuestionList[currentQIndex];
+      document.getElementById('feedbackPanel').classList.add('hidden');
+      if (q.stage === 1 && stage1DirectInputMode) {
+        const inputEl = document.getElementById('directAnswerInput');
+        inputEl.disabled = false;
+        inputEl.value = '';
+        inputEl.focus();
+      }
+    }
+
+    function nextQuestion() {
+      playClick();
+      if (playMode === 'team' && isQuestionAnswered) {
+        currentTeamTurn = (currentTeamTurn + 1) % teamCount;
+        renderTeamScoreboard();
+      }
+
+      if (currentQIndex < currentQuestionList.length - 1) {
+        currentQIndex++;
+        renderQuestion();
+      } else {
+        showResultScreen();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQIndex > 0) {
+        playClick();
+        currentQIndex--;
+        renderQuestion();
+      }
+    }
+
+    function updateScoreUI() {
+      document.getElementById('scoreDisplay').textContent = soloScore;
+      const streakBadge = document.getElementById('streakBadge');
+      if (currentStreak >= 2) {
+        streakBadge.textContent = `🔥 ${currentStreak}연속 정답!`;
+        streakBadge.classList.remove('hidden');
+      } else {
+        streakBadge.classList.add('hidden');
+      }
+    }
+
+    /*************************************************************************
+     * 6. 범수 캐릭터 & 솜이불 포근함 온도계 업데이트 (스토리텔링 연동)
+     *************************************************************************/
+    function updateThermometerAndCharacter() {
+      const totalQ = currentQuestionList.length || 8;
+      const ratio = Math.min(1, solvedCount / totalQ);
+      const percent = Math.round(ratio * 100);
+
+      const bar = document.getElementById('thermometerBar');
+      const text = document.getElementById('thermometerText');
+      const speech = document.getElementById('beomsuStatusSpeech');
+      const charContainer = document.getElementById('beomsuStatusCharacter');
+
+      bar.style.width = `${Math.max(8, percent)}%`;
+      text.textContent = `${percent}%`;
+
+      // 진행 단계(0~39%, 40~79%, 80~100%)에 따라 왕관 크기와 범수 표정 변화
+      let crownScale = 1 - (ratio * 0.65);
+      let crownTranslateY = -(ratio * 35);
+
+      if (percent < 40) {
+        speech.textContent = "“아드님, 손자님 소리를 들을수록 기분이 엉망이에요! 도와주세요!”";
+      } else if (percent < 85) {
+        speech.textContent = "“우와! 여러분이 문제를 맞혀 주니까 무거운 왕관이 점점 작아지고 있어요!”";
+      } else {
+        speech.textContent = "“거의 다 왔어요! 이제 엄마와 할머니께 바른 높임말을 쓸 수 있어요!”";
+      }
+
+      const isHappy = percent >= 65;
+
+      charContainer.innerHTML = `
+        <svg viewBox="0 0 220 220" class="w-full h-full drop-shadow">
+          <circle cx="110" cy="120" r="82" fill="${isHappy ? '#D3F9D8' : '#FFF3BF'}" stroke="#4A3B32" stroke-width="3" stroke-dasharray="6 5"/>
+          
+          <!-- 줄어드는 황금 왕관 -->
+          <g transform="translate(110, ${65 + crownTranslateY}) scale(${crownScale}) translate(-110, -65)" class="animate-crown">
+            <path d="M50 85 L42 35 L80 58 L110 22 L140 58 L178 35 L170 85 Z" fill="#FFD43B" stroke="#4A3B32" stroke-width="4.5" stroke-linejoin="round"/>
+            <ellipse cx="110" cy="85" rx="60" ry="12" fill="#FAB005" stroke="#4A3B32" stroke-width="4.5"/>
+            <circle cx="82" cy="65" r="7" fill="#4DABF7" stroke="#4A3B32" stroke-width="3"/>
+            <circle cx="110" cy="55" r="8" fill="#FF6B6B" stroke="#4A3B32" stroke-width="3"/>
+            <circle cx="138" cy="65" r="7" fill="#69DB7C" stroke="#4A3B32" stroke-width="3"/>
+          </g>
+
+          <!-- 범수 몸통 -->
+          <path d="M65 205 C65 162, 155 162, 155 205 Z" fill="#51CF66" stroke="#4A3B32" stroke-width="4.5"/>
+          <!-- 범수 얼굴 -->
+          <circle cx="110" cy="140" r="36" fill="#FFE8CC" stroke="#4A3B32" stroke-width="4.5"/>
+          <!-- 초록 모자 -->
+          <path d="M74 130 C74 98, 146 98, 146 130 C130 118, 90 118, 74 130 Z" fill="#40C057" stroke="#4A3B32" stroke-width="4.5"/>
+          <!-- 눈 -->
+          <circle cx="96" cy="138" r="5" fill="#4A3B32"/>
+          <circle cx="124" cy="138" r="5" fill="#4A3B32"/>
+          <ellipse cx="85" cy="148" rx="6.5" ry="4" fill="#FFA8A8" opacity="0.75"/>
+          <ellipse cx="135" cy="148" rx="6.5" ry="4" fill="#FFA8A8" opacity="0.75"/>
+          <!-- 입 (행복 vs 당황) -->
+          ${
+            isHappy
+              ? '<path d="M98 150 Q110 162 122 150" fill="none" stroke="#E03131" stroke-width="4" stroke-linecap="round"/>'
+              : '<circle cx="110" cy="153" r="4.5" fill="#FA5252" stroke="#4A3B32" stroke-width="2.5"/>'
+          }
+        </svg>
+      `;
+    }
+
+    /*************************************************************************
+     * 7. 결과 / 엔딩 화면 표시
+     *************************************************************************/
+    function showResultScreen() {
+      playFanfareSound();
+      showScreen('screenResult');
+      const summaryBox = document.getElementById('resultSummaryBox');
+
+      if (playMode === 'team') {
+        const activeTeams = teams.slice(0, teamCount).sort((a, b) => b.score - a.score);
+        let html = `<h3 class="font-title text-2xl text-indigo-900 mb-3">🏆 모둠 대항전 최종 결과</h3><div class="grid grid-cols-2 sm:grid-cols-${teamCount} gap-3">`;
+        activeTeams.forEach((t, idx) => {
+          const medal = idx === 0 ? '🥇 1위' : idx === 1 ? '🥈 2위' : idx === 2 ? '🥉 3위' : '👏 참가상';
+          html += `
+            <div class="bg-amber-50 border-2 border-stone-800 rounded-2xl p-3">
+              <div class="font-title text-sm text-rose-600">${medal}</div>
+              <div class="font-title text-lg text-stone-900 mt-0.5">${t.icon} ${t.name}</div>
+              <div class="font-title text-2xl text-indigo-700 mt-1">${t.score}점</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        summaryBox.innerHTML = html;
+      } else {
+        summaryBox.innerHTML = `
+          <div class="flex flex-col sm:flex-row items-center justify-around gap-4">
+            <div>
+              <div class="text-sm font-bold text-stone-500">완료한 문제 수</div>
+              <div class="font-title text-3xl text-stone-900 mt-1">${currentQuestionList.length}문항 완주!</div>
+            </div>
+            <div class="h-10 w-0.5 bg-stone-200 hidden sm:block"></div>
+            <div>
+              <div class="text-sm font-bold text-stone-500">획득한 총 점수</div>
+              <div class="font-title text-4xl text-amber-500 mt-1">⭐ ${soloScore}점</div>
+            </div>
+            <div class="h-10 w-0.5 bg-stone-200 hidden sm:block"></div>
+            <div>
+              <div class="text-sm font-bold text-stone-500">솜이불 포근함 지수</div>
+              <div class="font-title text-3xl text-rose-500 mt-1">💖 100% 달성!</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    /*************************************************************************
+     * 8. 보너스 활동: 교과서 210쪽 '높임의 뜻이 있는 낱말 기억 놀이'
+     *************************************************************************/
+    const MEMORY_PAIRS = [
+      { id: 1, base: "밥", honorific: "진지" },
+      { id: 2, base: "먹다", honorific: "드시다 (잡수시다)" },
+      { id: 3, base: "말", honorific: "말씀" },
+      { id: 4, base: "생일", honorific: "생신" },
+      { id: 5, base: "나이", honorific: "연세" },
+      { id: 6, base: "자다", honorific: "주무시다" }
+    ];
+
+    let memoryDeck = [];
+    let flippedCards = [];
+    let matchedPairCount = 0;
+    let lockBoard = false;
+
+    function openMemoryGame() {
+      playClick();
+      showScreen('screenMemory');
+      initMemoryGame();
+    }
+
+    function initMemoryGame() {
+      playClick();
+      matchedPairCount = 0;
+      flippedCards = [];
+      lockBoard = false;
+      document.getElementById('memoryMatchedCount').textContent = '0';
+      document.getElementById('memoryMatchBanner').textContent = '분홍색(본래 낱말) 카드와 파란색(높임 낱말) 카드를 뒤집어 뜻이 같은 짝을 찾아보세요!';
+
+      memoryDeck = [];
+      MEMORY_PAIRS.forEach(p => {
+        memoryDeck.push({ pairId: p.id, word: p.base, type: 'base', label: '본래의 낱말' });
+        memoryDeck.push({ pairId: p.id, word: p.honorific, type: 'honorific', label: '높임 낱말' });
+      });
+
+      memoryDeck.sort(() => Math.random() - 0.5);
+
+      const grid = document.getElementById('memoryGrid');
+      grid.innerHTML = '';
+
+      memoryDeck.forEach((cardData, idx) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = "memory-card cursor-pointer";
+        cardEl.dataset.index = idx;
+
+        const frontBg = cardData.type === 'base' 
+          ? 'bg-rose-200 hover:bg-rose-300' 
+          : 'bg-sky-200 hover:bg-sky-300';
+        const badgeText = cardData.type === 'base' ? '📕 본래의 낱말' : '📘 높임 낱말';
+
+        cardEl.innerHTML = `
+          <div class="memory-card-inner">
+            <div class="memory-card-front ${frontBg}">
+              <span class="font-title text-2xl sm:text-3xl text-stone-800">❓</span>
+              <span class="text-xs font-bold text-stone-700 mt-1 bg-white/80 px-2.5 py-0.5 rounded-full border border-stone-500">
+                ${badgeText}
+              </span>
+            </div>
+            <div class="memory-card-back">
+              <span class="text-xs font-bold ${cardData.type === 'base' ? 'text-rose-600' : 'text-sky-700'} mb-1">
+                ${badgeText}
+              </span>
+              <span class="font-title text-xl sm:text-2xl text-stone-900 break-keep">
+                ${cardData.word}
+              </span>
+            </div>
+          </div>
+        `;
+
+        cardEl.onclick = () => flipMemoryCard(cardEl, cardData);
+        grid.appendChild(cardEl);
+      });
+    }
+
+    function flipMemoryCard(cardEl, cardData) {
+      if (lockBoard) return;
+      if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+
+      playClick();
+      cardEl.classList.add('flipped');
+      flippedCards.push({ el: cardEl, data: cardData });
+
+      if (flippedCards.length === 2) {
+        lockBoard = true;
+        const [first, second] = flippedCards;
+
+        if (first.data.pairId === second.data.pairId) {
+          // 매치 성공!
+          setTimeout(() => {
+            playCorrectSound();
+            first.el.classList.add('matched');
+            second.el.classList.add('matched');
+            matchedPairCount++;
+            document.getElementById('memoryMatchedCount').textContent = matchedPairCount;
+
+            const pairObj = MEMORY_PAIRS.find(p => p.id === first.data.pairId);
+            document.getElementById('memoryMatchBanner').innerHTML = `🎉 짝 찾기 성공! <strong>[${pairObj.base} ↔ ${pairObj.honorific}]</strong>`;
+
+            flippedCards = [];
+            lockBoard = false;
+
+            if (matchedPairCount === MEMORY_PAIRS.length) {
+              playFanfareSound();
+              document.getElementById('memoryMatchBanner').innerHTML = `🏆 축하합니다! 6쌍의 높임 낱말 카드를 모두 찾았어요!`;
+            }
+          }, 350);
+        } else {
+          // 매치 실패
+          setTimeout(() => {
+            playWrongSound();
+            first.el.classList.remove('flipped');
+            second.el.classList.remove('flipped');
+            flippedCards = [];
+            lockBoard = false;
+          }, 950);
+        }
+      }
+    }
+
+    /*************************************************************************
+     * 9. 교사용 전체 문제 목록/정답 모달 제어
+     *************************************************************************/
+    let showAnswersInModal = true;
+
+    function openTeacherModal() {
+      playClick();
+      renderTeacherModalList();
+      document.getElementById('teacherModal').classList.remove('hidden');
+    }
+
+    function closeTeacherModal() {
+      playClick();
+      document.getElementById('teacherModal').classList.add('hidden');
+    }
+
+    function toggleModalAnswers() {
+      playClick();
+      showAnswersInModal = !showAnswersInModal;
+      renderTeacherModalList();
+    }
+
+    function renderTeacherModalList() {
+      const container = document.getElementById('teacherModalList');
+      container.innerHTML = '';
+
+      [1, 2, 3, 4].forEach(stageNum => {
+        const stageQuestions = QUIZ_DB.filter(q => q.stage === stageNum);
+        const section = document.createElement('div');
+        section.className = "bg-white border-2 border-stone-800 rounded-2xl p-4 shadow-xs";
+
+        let listHtml = `
+          <h4 class="font-title text-xl text-stone-900 mb-3 pb-2 border-b-2 border-stone-200 flex items-center justify-between">
+            <span>${STAGE_INFO[stageNum].title}</span>
+            <button onclick="closeTeacherModal(); startQuiz(${stageNum});" class="btn-3d bg-amber-300 text-stone-900 px-3 py-1 text-xs font-title">
+              이 스테이지 시작
+            </button>
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+        `;
+
+        stageQuestions.forEach((q, idx) => {
+          const summaryText = q.stage <= 2 
+            ? `${q.sentenceBefore} <strong class="text-rose-600">( ${showAnswersInModal ? q.answer : '❓'} )</strong> ${q.sentenceAfter}`
+            : q.stage === 3
+              ? `[${q.wordPair[0]} ↔ ${q.wordPair[1]}] ${q.questionText}`
+              : `${q.wrongDialogue} → ${q.questionText}`;
+
+          listHtml += `
+            <div onclick="jumpToQuestion(${stageNum}, ${idx})" class="cursor-pointer p-3 rounded-xl border-2 border-stone-200 hover:border-indigo-500 hover:bg-indigo-50/60 transition flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between text-xs font-bold text-stone-500 mb-1">
+                  <span class="bg-stone-200 text-stone-800 px-2 py-0.5 rounded-md">${stageNum}-${q.qNum}번</span>
+                  <span>${q.page}</span>
+                </div>
+                <div class="text-sm text-stone-800 font-medium leading-snug">${summaryText}</div>
+              </div>
+              <div class="mt-2 pt-1.5 border-t border-dashed border-stone-200 flex items-center justify-between text-xs">
+                <span class="font-bold text-emerald-700">
+                  정답: ${showAnswersInModal ? q.answer : '🔒 (가려짐)'}
+                </span>
+                <span class="text-indigo-600 font-bold">이 문제로 이동 →</span>
+              </div>
+            </div>
+          `;
+        });
+
+        listHtml += `</div>`;
+        section.innerHTML = listHtml;
+        container.appendChild(section);
+      });
+    }
+
+    function jumpToQuestion(stageNum, indexInStage) {
+      closeTeacherModal();
+      activeStageMode = stageNum;
+      currentQuestionList = QUIZ_DB.filter(q => q.stage === stageNum);
+      currentQIndex = indexInStage;
+
+      const teamBoard = document.getElementById('teamScoreboard');
+      if (playMode === 'team') {
+        teamBoard.classList.remove('hidden');
+        renderTeamScoreboard();
+      } else {
+        teamBoard.classList.add('hidden');
+      }
+
+      showScreen('screenQuiz');
+      updateThermometerAndCharacter();
+      renderQuestion();
+    }
+  </script>
+</body>
+</html>
